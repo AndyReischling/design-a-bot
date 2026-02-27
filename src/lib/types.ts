@@ -13,6 +13,7 @@ export interface CharacterSheet {
   forbiddenMoves: string;
   innerLife: string;
   outerLife: string;
+  appearance?: string;
   isArchive?: boolean;
   source?: string;
 }

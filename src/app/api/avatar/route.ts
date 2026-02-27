@@ -9,19 +9,8 @@ async function getOpenAI() {
 }
 
 function buildAvatarPrompt(character: CharacterSheet): string {
-  const mood = character.fear && character.desire
-    ? `Their deepest desire is "${character.desire}" and their deepest fear is "${character.fear}".`
-    : "";
-  const voice = character.voiceSoundsLike
-    ? `Their personality sounds like: ${character.voiceSoundsLike}.`
-    : "";
-  const status = character.status === "higher"
-    ? "They carry themselves with authority."
-    : character.status === "lower"
-      ? "They carry themselves with humility."
-      : "They see themselves as an equal.";
-
-  return `A single pixelated robot character on a plain white background. 8-bit retro pixel art style, like a character from a classic arcade game. The robot should visually express this personality: ${character.name}. ${character.backstory ? character.backstory : ""} ${mood} ${voice} ${status} The robot's shape, color palette, expression, and accessories should all reflect who they are. Simple, iconic, memorable. No text. No background elements. Just the robot, centered, on white.`;
+  const appearance = character.appearance || "";
+  return `A single pixelated robot character on a plain white background. 8-bit retro pixel art style, like a character from a classic arcade game. The user described the robot as: "${appearance}". The robot's name is ${character.name || "unknown"}. Make the pixel art match this description closely. Simple, iconic, memorable. No text. No background elements. Just the robot, centered, on white.`;
 }
 
 export async function POST(request: Request) {

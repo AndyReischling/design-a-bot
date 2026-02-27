@@ -9,14 +9,8 @@ async function generateAvatar(code: string, playerId: string, character: Charact
     if (!key) return;
     const openai = new OpenAI({ apiKey: key });
 
-    const mood = character.desire && character.fear
-      ? `Their deepest desire is "${character.desire}" and their deepest fear is "${character.fear}".`
-      : "";
-    const voice = character.voiceSoundsLike
-      ? `Their personality sounds like: ${character.voiceSoundsLike}.`
-      : "";
-
-    const prompt = `A single pixelated robot character on a plain white background. 8-bit retro pixel art style, like a character from a classic arcade game. The robot should visually express this personality: ${character.name}. ${character.backstory || ""} ${mood} ${voice} The robot's shape, color palette, expression, and accessories should all reflect who they are. Simple, iconic, memorable. No text. No background elements. Just the robot, centered, on white.`;
+    const appearance = character.appearance || "";
+    const prompt = `A single pixelated robot character on a plain white background. 8-bit retro pixel art style, like a character from a classic arcade game. The user described the robot as: "${appearance}". The robot's name is ${character.name || "unknown"}. Make the pixel art match this description closely. Simple, iconic, memorable. No text. No background elements. Just the robot, centered, on white.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",

@@ -12,9 +12,10 @@ import type { CharacterSheet } from "@/lib/types";
 
 export default function CreatePage() {
   const router = useRouter();
-  const { character } = useAppState();
+  const { character, avatarUrl } = useAppState();
   const dispatch = useAppDispatch();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
 
   const current: Partial<CharacterSheet> = character || {
     signatureMoves: ["", "", "", "", ""],
@@ -54,14 +55,8 @@ export default function CreatePage() {
   const progress = computeProgress(current);
   const canSubmit = progress >= 100;
 
-  const handleSubmit = () => {
-    if (!canSubmit) return;
-    const id = crypto.randomUUID();
-    dispatch({
-      type: "SET_CHARACTER",
-      payload: { ...current, id },
-    });
-
+  const handleGenerateAvatar = useCallback(() => {
+    setAvatarLoading(true);
     fetch("/api/avatar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -71,8 +66,17 @@ export default function CreatePage() {
       .then((data) => {
         if (data.url) dispatch({ type: "SET_AVATAR", payload: data.url });
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setAvatarLoading(false));
+  }, [current, dispatch]);
 
+  const handleSubmit = () => {
+    if (!canSubmit) return;
+    const id = crypto.randomUUID();
+    dispatch({
+      type: "SET_CHARACTER",
+      payload: { ...current, id },
+    });
     router.push("/audition");
   };
 
@@ -106,7 +110,13 @@ export default function CreatePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <CharacterForm character={current} onChange={handleChange} />
+            <CharacterForm
+              character={current}
+              onChange={handleChange}
+              avatarUrl={avatarUrl}
+              onGenerateAvatar={handleGenerateAvatar}
+              avatarLoading={avatarLoading}
+            />
 
             {/* Bottom actions */}
             <div className="mt-6 flex flex-wrap items-center gap-4">
