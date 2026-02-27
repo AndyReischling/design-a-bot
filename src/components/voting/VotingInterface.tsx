@@ -15,7 +15,7 @@ interface BotResponse {
 interface VotingInterfaceProps {
   responses: BotResponse[];
   allowSelfVote: boolean;
-  onVote: (botLabel: string) => void;
+  onVote: (approvals: Record<string, boolean>) => void;
   hasVoted: boolean;
 }
 
@@ -25,7 +25,7 @@ export default function VotingInterface({
   onVote,
   hasVoted,
 }: VotingInterfaceProps) {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [approvals, setApprovals] = useState<Record<string, boolean | null>>({});
 
   if (hasVoted) {
     return (
@@ -35,77 +35,117 @@ export default function VotingInterface({
             <path d="M3 8.5L6.5 12L13 4" stroke="var(--teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-        <p className="font-sans text-sm text-bone">Vote submitted. Waiting for others...</p>
+        <p className="font-sans text-sm text-bone">Votes submitted. Waiting for others...</p>
       </div>
     );
   }
 
+  const allVoted = responses.every((r) => {
+    if (r.isSelf && !allowSelfVote) return true;
+    return approvals[r.botLabel] !== undefined && approvals[r.botLabel] !== null;
+  });
+
+  const handleSubmit = () => {
+    const result: Record<string, boolean> = {};
+    for (const r of responses) {
+      if (r.isSelf && !allowSelfVote) continue;
+      if (approvals[r.botLabel] !== null && approvals[r.botLabel] !== undefined) {
+        result[r.botLabel] = approvals[r.botLabel]!;
+      }
+    }
+    onVote(result);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <p className="font-sans text-xs font-medium uppercase tracking-widest text-bone">
-        Tap the most believable response
+        Vote yes or no on each bot
       </p>
 
       <div className="flex flex-col gap-3">
         {responses.map((r) => {
           const disabled = r.isSelf && !allowSelfVote;
-          const isSelected = selected === r.botLabel;
+          const vote = approvals[r.botLabel];
+          const isDialogue = /USER:\s/i.test(r.response) || /^[A-Za-z\s]+:\s/m.test(r.response);
 
           return (
-            <motion.button
+            <motion.div
               key={r.botLabel}
-              type="button"
-              disabled={disabled}
-              onClick={() => !disabled && setSelected(r.botLabel)}
               className={`
-                w-full text-left rounded-xl border p-4 transition-all duration-200
-                ${disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}
+                w-full rounded-xl border p-4 transition-all duration-200
+                ${disabled ? "opacity-40" : ""}
                 ${
-                  isSelected
-                    ? "border-amber/60 bg-amber/5 shadow-[0_0_16px_rgba(232,148,58,0.1)]"
-                    : "border-bone/10 bg-surface hover:border-amber/40"
+                  vote === true
+                    ? "border-teal/60 bg-teal/5"
+                    : vote === false
+                      ? "border-orchid/60 bg-orchid/5"
+                      : "border-bone/10 bg-surface"
                 }
               `}
-              whileTap={!disabled ? { scale: 0.98 } : {}}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1">
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-orchid">
-                    {r.botLabel}
-                  </span>
-                  {r.isSelf && !allowSelfVote && (
-                    <span className="ml-2 font-sans text-[10px] text-bone">(yours)</span>
-                  )}
-                  <div className="mt-1">
-                    {/USER:\s/i.test(r.response) || /^[A-Za-z\s]+:\s/m.test(r.response) ? (
-                      <DialogueBlock text={r.response} />
-                    ) : (
-                      <p className="font-sans text-sm leading-relaxed text-bone whitespace-pre-wrap">
-                        {r.response}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div
-                  className={`mt-1 h-5 w-5 shrink-0 rounded-full border-2 transition-all ${
-                    isSelected
-                      ? "border-amber bg-amber"
-                      : "border-ash/30"
-                  }`}
-                />
+              <div className="mb-3">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-orchid">
+                  {r.botLabel}
+                </span>
+                {r.isSelf && !allowSelfVote && (
+                  <span className="ml-2 font-sans text-[10px] text-bone">(yours - skipped)</span>
+                )}
               </div>
-            </motion.button>
+
+              <div className="mb-4">
+                {isDialogue ? (
+                  <DialogueBlock text={r.response} />
+                ) : (
+                  <p className="font-sans text-sm leading-relaxed text-bone whitespace-pre-wrap">
+                    {r.response}
+                  </p>
+                )}
+              </div>
+
+              {!disabled && (
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setApprovals((prev) => ({ ...prev, [r.botLabel]: true }))}
+                    className={`
+                      flex-1 rounded-lg border-2 py-2 font-sans text-sm font-medium transition-all
+                      ${
+                        vote === true
+                          ? "border-teal bg-teal/20 text-teal"
+                          : "border-bone/10 text-bone hover:border-teal/50"
+                      }
+                    `}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setApprovals((prev) => ({ ...prev, [r.botLabel]: false }))}
+                    className={`
+                      flex-1 rounded-lg border-2 py-2 font-sans text-sm font-medium transition-all
+                      ${
+                        vote === false
+                          ? "border-orchid bg-orchid/20 text-orchid"
+                          : "border-bone/10 text-bone hover:border-orchid/50"
+                      }
+                    `}
+                  >
+                    No
+                  </button>
+                </div>
+              )}
+            </motion.div>
           );
         })}
       </div>
 
       <Button
         variant="primary"
-        disabled={!selected}
-        onClick={() => selected && onVote(selected)}
+        disabled={!allVoted}
+        onClick={handleSubmit}
         className="self-end"
       >
-        Submit Vote
+        Submit Votes
       </Button>
     </div>
   );

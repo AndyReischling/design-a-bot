@@ -40,20 +40,24 @@ export default function HostSessionPage() {
   const currentTaskId = TASK_ORDER[currentTask];
   const currentMeta = currentTaskId ? TASK_META[currentTaskId] : null;
 
-  const votesForCurrentTask = useMemo(() => {
+  const votersForCurrentTask = useMemo(() => {
     if (!session) return 0;
-    return session.votes.filter((v) => v.taskIndex === currentTask).length;
+    return session.players.filter((p) => p.hasVoted[currentTask]).length;
   }, [session, currentTask]);
 
   const voteResults = useMemo(() => {
     if (!session || session.status !== "voting") return [];
-    return session.characters.map((c) => ({
-      botLabel: c.botLabel,
-      response: c.responses[currentTaskId] || "",
-      votes: session.votes.filter(
-        (v) => v.taskIndex === currentTask && v.votedForBotLabel === c.botLabel
-      ).length,
-    }));
+    return session.characters.map((c) => {
+      const votesForBot = session.votes.filter(
+        (v) => v.taskIndex === currentTask && v.botLabel === c.botLabel
+      );
+      return {
+        botLabel: c.botLabel,
+        response: c.responses[currentTaskId] || "",
+        yes: votesForBot.filter((v) => v.approval).length,
+        total: votesForBot.length,
+      };
+    });
   }, [session, currentTask, currentTaskId]);
 
   const canAdvance = useMemo(() => {
@@ -227,16 +231,13 @@ export default function HostSessionPage() {
 
             <div className="flex justify-center">
               <VoteCounter
-                votesIn={votesForCurrentTask}
+                votesIn={votersForCurrentTask}
                 totalVoters={session.players.length}
               />
             </div>
 
             {voteResults.length > 0 && (
-              <VoteReveal
-                results={voteResults}
-                maxVotes={Math.max(...voteResults.map((r) => r.votes))}
-              />
+              <VoteReveal results={voteResults} />
             )}
           </motion.div>
         )}
@@ -269,7 +270,7 @@ export default function HostSessionPage() {
           canAdvance={canAdvance}
           playerCount={session.players.length}
           submittedCount={submittedCount}
-          votesIn={votesForCurrentTask}
+          votesIn={votersForCurrentTask}
           totalVoters={session.players.length}
         />
       )}

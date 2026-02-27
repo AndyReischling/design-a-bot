@@ -164,11 +164,11 @@ function assignBotLabels(session: Session) {
   });
 }
 
-export function submitVote(
+export function submitApprovals(
   code: string,
   playerId: string,
   taskIndex: number,
-  votedForBotLabel: string
+  approvals: Record<string, boolean>
 ): boolean {
   const session = getSession(code);
   if (!session) return false;
@@ -179,15 +179,18 @@ export function submitVote(
   if (!player) return false;
   if (player.hasVoted[taskIndex]) return false;
 
-  if (!session.settings.allowSelfVote) {
-    const playerChar = session.characters.find((c) => c.playerId === playerId);
-    if (playerChar && playerChar.botLabel === votedForBotLabel) return false;
+  for (const [botLabel, approval] of Object.entries(approvals)) {
+    const isSelf = session.characters.find(
+      (c) => c.playerId === playerId && c.botLabel === botLabel
+    );
+    if (isSelf && !session.settings.allowSelfVote) continue;
+
+    const validLabel = session.characters.some((c) => c.botLabel === botLabel);
+    if (!validLabel) continue;
+
+    session.votes.push({ playerId, taskIndex, botLabel, approval });
   }
 
-  const validLabel = session.characters.some((c) => c.botLabel === votedForBotLabel);
-  if (!validLabel) return false;
-
-  session.votes.push({ playerId, taskIndex, votedForBotLabel });
   player.hasVoted[taskIndex] = true;
   return true;
 }

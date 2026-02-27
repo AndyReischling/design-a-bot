@@ -23,14 +23,14 @@ export function detectAwards(
     },
   });
 
-  // Audience Favorite - most total votes
-  const topAudience = [...rankings].sort((a, b) => b.audienceVotePercent - a.audienceVotePercent)[0];
+  // Audience Favorite - highest audience points
+  const topAudience = [...rankings].sort((a, b) => b.audiencePoints - a.audiencePoints)[0];
   results.push({
     botLabel: topAudience.botLabel,
     award: {
       id: "audience-favorite",
       label: "Audience Favorite",
-      description: `${topAudience.audienceVotePercent}% of all votes`,
+      description: `${topAudience.audiencePoints}% approval rating`,
     },
   });
 
@@ -53,14 +53,17 @@ export function detectAwards(
     if (idx >= 0) results.splice(idx, 1);
   }
 
-  // Biggest Gap - largest |coherenceRank - audienceRank|
-  const withGap = rankings.map((r) => ({
-    ...r,
-    gap: Math.abs(r.coherenceRank - r.audienceRank),
-  }));
+  // Biggest Gap - largest difference between coherence and audience rankings
+  const byCoherence = [...rankings].sort((a, b) => b.coherenceScore - a.coherenceScore);
+  const byAudience = [...rankings].sort((a, b) => b.audiencePoints - a.audiencePoints);
+  const withGap = rankings.map((r) => {
+    const cRank = byCoherence.findIndex((x) => x.botLabel === r.botLabel) + 1;
+    const aRank = byAudience.findIndex((x) => x.botLabel === r.botLabel) + 1;
+    return { ...r, gap: Math.abs(cRank - aRank), cRank, aRank };
+  });
   const biggestGap = withGap.sort((a, b) => b.gap - a.gap)[0];
   if (biggestGap.gap >= 2) {
-    const lovedByHumans = biggestGap.audienceRank < biggestGap.coherenceRank;
+    const lovedByHumans = biggestGap.aRank < biggestGap.cRank;
     results.push({
       botLabel: biggestGap.botLabel,
       award: {
@@ -73,19 +76,21 @@ export function detectAwards(
     });
   }
 
-  // Scene Stealer - won the most individual task rounds
+  // Scene Stealer - won the most individual task rounds (highest approval per task)
   const taskWins: Record<string, number> = {};
   for (let t = 0; t < 6; t++) {
-    const votesThisTask: Record<string, number> = {};
+    const approvalThisTask: Record<string, number> = {};
     for (const char of session.characters) {
-      votesThisTask[char.botLabel] = session.votes.filter(
-        (v) => v.taskIndex === t && v.votedForBotLabel === char.botLabel
-      ).length;
+      const votesForBot = session.votes.filter(
+        (v) => v.taskIndex === t && v.botLabel === char.botLabel
+      );
+      const yesCount = votesForBot.filter((v) => v.approval).length;
+      approvalThisTask[char.botLabel] = yesCount;
     }
-    const maxVotes = Math.max(...Object.values(votesThisTask));
-    if (maxVotes > 0) {
-      for (const [label, count] of Object.entries(votesThisTask)) {
-        if (count === maxVotes) {
+    const maxYes = Math.max(...Object.values(approvalThisTask));
+    if (maxYes > 0) {
+      for (const [label, count] of Object.entries(approvalThisTask)) {
+        if (count === maxYes) {
           taskWins[label] = (taskWins[label] || 0) + 1;
         }
       }
@@ -103,13 +108,13 @@ export function detectAwards(
     });
   }
 
-  // The Rock - lowest variance in votes across tasks
+  // The Rock - lowest variance in approval across tasks
   const chars = session.characters.filter((c) => c.audienceScore);
   if (chars.length > 0) {
     const variances = chars.map((c) => {
-      const vpt = c.audienceScore!.votesPerTask;
-      const mean = vpt.reduce((a, b) => a + b, 0) / vpt.length;
-      const variance = vpt.reduce((a, b) => a + (b - mean) ** 2, 0) / vpt.length;
+      const ypt = c.audienceScore!.yesPerTask;
+      const mean = ypt.reduce((a, b) => a + b, 0) / ypt.length;
+      const variance = ypt.reduce((a, b) => a + (b - mean) ** 2, 0) / ypt.length;
       return { botLabel: c.botLabel, variance };
     });
     const rock = variances.sort((a, b) => a.variance - b.variance)[0];
@@ -119,18 +124,18 @@ export function detectAwards(
         award: {
           id: "the-rock",
           label: "The Rock",
-          description: "Most consistent audience votes across all 6 tasks",
+          description: "Most consistent approval across all 6 tasks",
         },
       });
     }
   }
 
-  // Comeback Kid - fewest votes in tasks 1-2, most in tasks 5-6
+  // Comeback Kid - lowest approval in tasks 1-2, highest in tasks 5-6
   if (chars.length > 0) {
     const comebacks = chars.map((c) => {
-      const vpt = c.audienceScore!.votesPerTask;
-      const early = vpt[0] + vpt[1];
-      const late = vpt[4] + vpt[5];
+      const ypt = c.audienceScore!.yesPerTask;
+      const early = ypt[0] + ypt[1];
+      const late = ypt[4] + ypt[5];
       return { botLabel: c.botLabel, swing: late - early, early, late };
     });
     const kid = comebacks.sort((a, b) => b.swing - a.swing)[0];
@@ -146,23 +151,23 @@ export function detectAwards(
     }
   }
 
-  // Gloucester's Favorite - most votes on task 6
-  const task6Votes: Record<string, number> = {};
+  // Gloucester's Favorite - highest approval on task 6
+  const task6Approval: Record<string, number> = {};
   for (const char of session.characters) {
-    task6Votes[char.botLabel] = session.votes.filter(
-      (v) => v.taskIndex === 5 && v.votedForBotLabel === char.botLabel
+    task6Approval[char.botLabel] = session.votes.filter(
+      (v) => v.taskIndex === 5 && v.botLabel === char.botLabel && v.approval
     ).length;
   }
-  const maxT6 = Math.max(...Object.values(task6Votes));
+  const maxT6 = Math.max(...Object.values(task6Approval));
   if (maxT6 > 0) {
-    const gloucesterFav = Object.entries(task6Votes).find(([, v]) => v === maxT6);
+    const gloucesterFav = Object.entries(task6Approval).find(([, v]) => v === maxT6);
     if (gloucesterFav) {
       results.push({
         botLabel: gloucesterFav[0],
         award: {
           id: "gloucesters-favorite",
           label: "Gloucester's Favorite",
-          description: "Most votes on the Lear retelling",
+          description: "Highest approval on the Lear retelling",
         },
       });
     }

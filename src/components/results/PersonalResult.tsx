@@ -24,7 +24,7 @@ export default function PersonalResult({
         {ranking.characterName}
       </h3>
       <p className="font-sans text-sm text-bone">
-        Placed #{Math.round(ranking.combinedRank)} of {totalPlayers} overall
+        Total Score: {ranking.totalScore} ({ranking.coherenceScore}/30 AI + {ranking.audiencePoints} audience)
       </p>
 
       <div className="mt-4 flex flex-col gap-3">
@@ -34,9 +34,9 @@ export default function PersonalResult({
           label="AI Coherence"
         />
         <GlowBar
-          value={ranking.audienceVotePercent}
+          value={ranking.audiencePoints}
           max={100}
-          label="Audience Votes"
+          label="Audience Approval"
         />
       </div>
 

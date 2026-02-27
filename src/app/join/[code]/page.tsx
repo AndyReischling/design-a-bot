@@ -119,14 +119,14 @@ export default function PlayerPage() {
   }, [code, playerId, character]);
 
   const handleVote = useCallback(
-    async (botLabel: string) => {
+    async (approvals: Record<string, boolean>) => {
       if (!playerId || !session) return;
       const taskIndex = session.currentTask;
       try {
         const res = await fetch(`/api/session/${code}/vote`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ playerId, taskIndex, votedForBotLabel: botLabel }),
+          body: JSON.stringify({ playerId, taskIndex, approvals }),
         });
         const data = await res.json();
         if (data.success) {

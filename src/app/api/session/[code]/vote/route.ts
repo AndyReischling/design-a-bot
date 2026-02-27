@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { submitVote } from "@/lib/session";
+import { submitApprovals } from "@/lib/session";
 
 export async function POST(
   request: Request,
@@ -8,16 +8,16 @@ export async function POST(
   try {
     const { code } = await params;
     const body = await request.json();
-    const { playerId, taskIndex, votedForBotLabel } = body;
+    const { playerId, taskIndex, approvals } = body;
 
-    if (!playerId || taskIndex === undefined || !votedForBotLabel) {
+    if (!playerId || taskIndex === undefined || !approvals) {
       return NextResponse.json(
-        { error: "playerId, taskIndex, and votedForBotLabel are required" },
+        { error: "playerId, taskIndex, and approvals are required" },
         { status: 400 }
       );
     }
 
-    const ok = submitVote(code, playerId, taskIndex, votedForBotLabel);
+    const ok = submitApprovals(code, playerId, taskIndex, approvals);
     if (!ok) {
       return NextResponse.json({ error: "Vote rejected" }, { status: 400 });
     }

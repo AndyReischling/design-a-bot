@@ -60,6 +60,7 @@ export interface Player {
   joinedAt: number;
   hasSubmittedCharacter: boolean;
   hasVoted: Record<number, boolean>;
+  approvals?: Record<string, boolean>;
 }
 
 export interface CharacterWithAudition extends CharacterSheet {
@@ -73,13 +74,16 @@ export interface CharacterWithAudition extends CharacterSheet {
 export interface Vote {
   playerId: string;
   taskIndex: number;
-  votedForBotLabel: string;
+  botLabel: string;
+  approval: boolean;
 }
 
 export interface AudienceScore {
+  yesVotes: number;
   totalVotes: number;
-  votesPerTask: number[];
-  percentageOfVotes: number;
+  yesPerTask: number[];
+  totalPerTask: number[];
+  points: number;
 }
 
 export interface Session {
@@ -100,10 +104,8 @@ export interface FinalRanking {
   characterName: string;
   playerName: string;
   coherenceScore: number;
-  coherenceRank: number;
-  audienceVotePercent: number;
-  audienceRank: number;
-  combinedRank: number;
+  audiencePoints: number;
+  totalScore: number;
   awards: Award[];
 }
 

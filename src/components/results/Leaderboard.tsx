@@ -14,8 +14,7 @@ export default function Leaderboard({ rankings }: LeaderboardProps) {
         Final Results
       </h2>
 
-      {/* Header row */}
-      <div className="grid grid-cols-[40px_1fr_80px_80px_80px] gap-2 px-4 py-2">
+      <div className="grid grid-cols-[40px_1fr_70px_70px_80px] gap-2 px-4 py-2">
         <span className="font-mono text-[10px] uppercase tracking-widest text-bone">
           Rank
         </span>
@@ -29,11 +28,10 @@ export default function Leaderboard({ rankings }: LeaderboardProps) {
           Audience
         </span>
         <span className="font-mono text-[10px] uppercase tracking-widest text-bone text-right">
-          Combined
+          Total
         </span>
       </div>
 
-      {/* Rows */}
       {rankings.map((r, i) => (
         <motion.div
           key={r.botLabel}
@@ -41,9 +39,9 @@ export default function Leaderboard({ rankings }: LeaderboardProps) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.1, duration: 0.4 }}
           className={`
-            grid grid-cols-[40px_1fr_80px_80px_80px] gap-2 items-center
+            grid grid-cols-[40px_1fr_70px_70px_80px] gap-2 items-center
             rounded-lg border px-4 py-3
-            ${i === 0 ? "border-amber/30 bg-amber/5" : "border-white/[0.06] bg-surface"}
+            ${i === 0 ? "border-amber/30 bg-amber/5" : "border-bone/10 bg-surface"}
           `}
         >
           <span
@@ -63,10 +61,10 @@ export default function Leaderboard({ rankings }: LeaderboardProps) {
             {r.coherenceScore}/30
           </p>
           <p className="text-right font-mono text-sm text-amber">
-            {r.audienceVotePercent}%
+            {r.audiencePoints}
           </p>
-          <p className="text-right font-mono text-sm text-bone">
-            {r.combinedRank.toFixed(1)}
+          <p className={`text-right font-mono text-sm font-bold ${i === 0 ? "text-amber" : "text-bone"}`}>
+            {r.totalScore}
           </p>
         </motion.div>
       ))}

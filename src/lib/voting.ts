@@ -1,26 +1,29 @@
-import type { Session, AudienceScore, FinalRanking, Award } from "./types";
+import type { Session, FinalRanking } from "./types";
 import { detectAwards } from "./awards";
 
 export function computeAudienceScores(session: Session): void {
-  const totalVoters = session.players.length;
-
   for (const char of session.characters) {
-    const votesPerTask: number[] = [];
+    const yesPerTask: number[] = [];
+    const totalPerTask: number[] = [];
 
     for (let t = 0; t < 6; t++) {
-      const count = session.votes.filter(
-        (v) => v.taskIndex === t && v.votedForBotLabel === char.botLabel
-      ).length;
-      votesPerTask.push(count);
+      const votesForBot = session.votes.filter(
+        (v) => v.taskIndex === t && v.botLabel === char.botLabel
+      );
+      totalPerTask.push(votesForBot.length);
+      yesPerTask.push(votesForBot.filter((v) => v.approval).length);
     }
 
-    const totalVotes = votesPerTask.reduce((a, b) => a + b, 0);
-    const maxPossible = totalVoters * 6;
+    const yesVotes = yesPerTask.reduce((a, b) => a + b, 0);
+    const totalVotes = totalPerTask.reduce((a, b) => a + b, 0);
+    const pct = totalVotes > 0 ? Math.round((yesVotes / totalVotes) * 100) : 0;
 
     char.audienceScore = {
+      yesVotes,
       totalVotes,
-      votesPerTask,
-      percentageOfVotes: maxPossible > 0 ? Math.round((totalVotes / maxPossible) * 100) : 0,
+      yesPerTask,
+      totalPerTask,
+      points: pct,
     };
   }
 }
@@ -30,41 +33,23 @@ export function computeRankings(session: Session): FinalRanking[] {
 
   const chars = session.characters.filter((c) => c.coherenceScore);
 
-  const byCoherence = [...chars].sort(
-    (a, b) => (b.coherenceScore?.overall ?? 0) - (a.coherenceScore?.overall ?? 0)
-  );
-  const byAudience = [...chars].sort(
-    (a, b) => (b.audienceScore?.totalVotes ?? 0) - (a.audienceScore?.totalVotes ?? 0)
-  );
-
-  const coherenceRankMap = new Map<string, number>();
-  byCoherence.forEach((c, i) => coherenceRankMap.set(c.botLabel, i + 1));
-
-  const audienceRankMap = new Map<string, number>();
-  byAudience.forEach((c, i) => audienceRankMap.set(c.botLabel, i + 1));
-
   const rankings: FinalRanking[] = chars.map((c) => {
     const player = session.players.find((p) => p.id === c.playerId);
-    const cRank = coherenceRankMap.get(c.botLabel) ?? chars.length;
-    const aRank = audienceRankMap.get(c.botLabel) ?? chars.length;
+    const coherence = c.coherenceScore?.overall ?? 0;
+    const audience = c.audienceScore?.points ?? 0;
 
     return {
       botLabel: c.botLabel,
       characterName: c.name,
       playerName: player?.name ?? "Unknown",
-      coherenceScore: c.coherenceScore?.overall ?? 0,
-      coherenceRank: cRank,
-      audienceVotePercent: c.audienceScore?.percentageOfVotes ?? 0,
-      audienceRank: aRank,
-      combinedRank: (cRank + aRank) / 2,
+      coherenceScore: coherence,
+      audiencePoints: audience,
+      totalScore: coherence + audience,
       awards: [],
     };
   });
 
-  rankings.sort((a, b) => {
-    if (a.combinedRank !== b.combinedRank) return a.combinedRank - b.combinedRank;
-    return a.audienceRank - b.audienceRank;
-  });
+  rankings.sort((a, b) => b.totalScore - a.totalScore);
 
   const awards = detectAwards(session, rankings);
   for (const award of awards) {
@@ -75,22 +60,23 @@ export function computeRankings(session: Session): FinalRanking[] {
   return rankings;
 }
 
-export function getVoteCountsForTask(
+export function getApprovalCountsForTask(
   session: Session,
   taskIndex: number
-): Record<string, number> {
-  const counts: Record<string, number> = {};
+): Record<string, { yes: number; total: number }> {
+  const counts: Record<string, { yes: number; total: number }> = {};
   for (const char of session.characters) {
-    counts[char.botLabel] = 0;
+    counts[char.botLabel] = { yes: 0, total: 0 };
   }
   for (const vote of session.votes) {
-    if (vote.taskIndex === taskIndex) {
-      counts[vote.votedForBotLabel] = (counts[vote.votedForBotLabel] || 0) + 1;
+    if (vote.taskIndex === taskIndex && counts[vote.botLabel]) {
+      counts[vote.botLabel].total++;
+      if (vote.approval) counts[vote.botLabel].yes++;
     }
   }
   return counts;
 }
 
 export function getVotesSubmittedForTask(session: Session, taskIndex: number): number {
-  return session.votes.filter((v) => v.taskIndex === taskIndex).length;
+  return session.players.filter((p) => p.hasVoted[taskIndex]).length;
 }
