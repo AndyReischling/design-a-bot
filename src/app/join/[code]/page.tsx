@@ -201,7 +201,7 @@ export default function PlayerPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center">
         <LoadingOrb size={40} />
-        <p className="mt-4 font-sans text-sm text-ash">Connecting to session...</p>
+        <p className="mt-4 font-sans text-sm text-bone">Connecting to session...</p>
       </div>
     );
   }
@@ -215,7 +215,7 @@ export default function PlayerPage() {
             <span className="font-mono text-[10px] uppercase tracking-widest text-orchid">
               {session.status}
             </span>
-            <p className="font-sans text-xs text-ash">{playerName} / {code}</p>
+            <p className="font-sans text-xs text-bone">{playerName} / {code}</p>
           </div>
           <RobotAvatar size={32} interactive={false} />
         </div>
@@ -233,7 +233,7 @@ export default function PlayerPage() {
               <p className="font-sans text-lg text-bone">
                 You&apos;re in. Waiting for the host to start.
               </p>
-              <p className="font-sans text-sm text-ash">
+              <p className="font-sans text-sm text-bone">
                 {session.players.length} player{session.players.length !== 1 ? "s" : ""} in the lobby
               </p>
             </motion.div>
@@ -286,7 +286,7 @@ export default function PlayerPage() {
                 </svg>
               </div>
               <p className="font-sans text-lg text-bone">Character submitted</p>
-              <p className="font-sans text-sm text-ash">Waiting for everyone to finish...</p>
+              <p className="font-sans text-sm text-bone">Waiting for everyone to finish...</p>
             </motion.div>
           )}
 
@@ -303,7 +303,7 @@ export default function PlayerPage() {
               <p className="font-sans text-lg text-bone">
                 Your character is auditioning
               </p>
-              <p className="font-sans text-sm text-ash">Sit tight.</p>
+              <p className="font-sans text-sm text-bone">Sit tight.</p>
             </motion.div>
           )}
 
@@ -320,7 +320,7 @@ export default function PlayerPage() {
                 <span className="font-mono text-xs uppercase tracking-widest text-orchid">
                   Task {currentMeta.number} — {currentMeta.label}
                 </span>
-                <p className="mt-2 font-sans text-sm text-bone/70">
+                <p className="mt-2 font-sans text-sm text-bone">
                   {currentMeta.scenario}
                 </p>
               </div>
@@ -330,13 +330,13 @@ export default function PlayerPage() {
                     <span className="font-mono text-[10px] uppercase tracking-wider text-orchid">
                       {c.botLabel}
                     </span>
-                    <p className="mt-1 font-sans text-sm leading-relaxed text-bone/80 whitespace-pre-wrap">
+                    <p className="mt-1 font-sans text-sm leading-relaxed text-bone whitespace-pre-wrap">
                       {c.responses[currentTaskId] || "..."}
                     </p>
                   </Card>
                 ))}
               </div>
-              <p className="text-center font-sans text-xs text-ash">
+              <p className="text-center font-sans text-xs text-bone">
                 Waiting for host to open voting...
               </p>
             </motion.div>

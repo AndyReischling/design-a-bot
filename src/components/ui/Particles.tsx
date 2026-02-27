@@ -1,19 +1,26 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 interface ParticlesProps {
   count?: number;
 }
 
 export default function Particles({ count = 30 }: ParticlesProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const particles = useMemo(() => {
+    if (!mounted) return [];
     return Array.from({ length: count }, (_, i) => {
       const size = Math.random() * 2 + 1;
       const colors = [
-        "rgba(232, 148, 58, 0.4)",
-        "rgba(63, 207, 207, 0.3)",
-        "rgba(155, 109, 255, 0.3)",
+        "rgba(245, 213, 71, 0.35)",
+        "rgba(137, 201, 184, 0.3)",
+        "rgba(232, 180, 184, 0.3)",
       ];
       const color = colors[i % 3];
       return {
@@ -28,7 +35,7 @@ export default function Particles({ count = 30 }: ParticlesProps) {
         dy: `${-Math.random() * 120 - 30}px`,
       };
     });
-  }, [count]);
+  }, [count, mounted]);
 
   return (
     <div

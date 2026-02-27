@@ -32,7 +32,7 @@ export default function Timer({ durationMinutes, onExpire, startTime }: TimerPro
   return (
     <div
       className={`font-mono text-2xl tabular-nums ${
-        urgent ? "text-amber animate-pulse" : "text-bone/60"
+        urgent ? "text-amber animate-pulse" : "text-bone"
       }`}
     >
       {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}

@@ -25,7 +25,7 @@ export default function AwardBadge({ award }: AwardBadgeProps) {
       <span className="font-mono text-xs text-orchid shrink-0">{icon}</span>
       <div>
         <p className="font-sans text-sm font-semibold text-bone">{award.label}</p>
-        <p className="font-sans text-xs text-bone/60">{award.description}</p>
+        <p className="font-sans text-xs text-bone">{award.description}</p>
       </div>
     </div>
   );

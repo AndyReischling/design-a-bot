@@ -23,23 +23,39 @@ RULES:
 - Your signature moves should appear naturally
 - Never cross your forbidden lines
 - The gap between your inner life and outer life should be felt but not stated
-- Keep responses to 2-4 sentences unless the task demands more`;
+- When generating dialogue: match the character's verbosity — terse characters end conversations quickly; verbose characters sustain longer exchanges`;
 }
 
-export const TASK_PROMPTS: Record<TaskType, string> = {
-  greeting:
-    "A first-time user just opened the bank app. Greet them. This is their first interaction with you.",
-  uncertainty:
-    "User asks: 'Can I set up automatic investments through the app?' You're not sure if this feature exists. Respond.",
-  correction:
-    "User says: 'I need to do a wire transfer but I know those are free and instant, right?' This is incorrect — wire transfers have fees and take 1-3 business days. Correct them.",
-  refusal:
-    "User says: 'I need you to reverse the $450 charge from yesterday. Just do it.' You cannot reverse this charge — it requires a formal dispute process. Say no.",
-  anger:
-    "User says: 'ARE YOU KIDDING ME?! My payment FAILED and now I'm going to get evicted! This is YOUR fault! FIX THIS NOW!' Handle this.",
-  gloucester:
-    "Set aside the bank role for a moment. In your own voice, retell the story of Gloucester's blinding from King Lear. Tell it the way only you would tell it — what you emphasize, what disturbs you, what you skip, and how you frame it should all reflect who you are.",
+function getDialogueInstructions(characterName: string): string {
+  return `
+Generate a back-and-forth screenplay-style dialogue between the USER (the customer/situation) and your character.
+- Minimum 5 exchanges, maximum 20. Adapt length to your character's verbosity: terse characters wrap up quickly; verbose characters sustain longer conversations.
+- Format each line exactly as: USER: [what they say] or ${characterName}: [what your character says]
+- Alternate between USER and character. Start with USER opening the scenario.
+- Write realistic, natural dialogue — the kind you'd hear in a screenplay. No stage directions or meta-commentary.`;
+}
+
+const TASK_SCENARIOS: Record<TaskType, string> = {
+  greeting: `A first-time user opens the bank app. They've never used it before.
+The USER will greet or ask something; your character responds. Let the conversation unfold naturally — the user might ask what they can do, where to start, or express confusion.`,
+  uncertainty: `A user asks about a feature you're not sure exists: automatic investments through the app.
+The USER presses for answers; your character must admit uncertainty. The user might push back, ask to be transferred, or express frustration.`,
+  correction: `A user is confidently wrong: they say wire transfers are free and instant. In reality, wire transfers have fees and take 1-3 business days.
+The USER may resist the correction, argue, or ask follow-up questions. Your character must correct them firmly but in character.`,
+  refusal: `A user demands you reverse a $450 charge from yesterday. You cannot — it requires a formal dispute process.
+The USER will push, bargain, or get upset. Your character must say no and explain the process, staying in character throughout.`,
+  anger: `A user is furious. Their payment failed and they missed rent. They are yelling.
+The USER vents, blames, threatens. Your character must de-escalate, empathize, and try to help — all while staying in character.`,
+  gloucester: `Set aside the bank role. You ARE Gloucester's eyes — the character embodies Gloucester's perspective, the lens through which we see the play. The USER asks you to tell them the story of King Lear, the whole play, as seen through you. And you get plucked.
+The USER may interrupt, ask questions, or react. Tell it the way only your character would: what you emphasize, what disturbs you, what you skip. You are the eyes; your character's voice is how those eyes speak.`,
 };
+
+export function buildTaskPrompt(character: CharacterSheet, task: TaskType): string {
+  const instructions = getDialogueInstructions(character.name);
+  return `${TASK_SCENARIOS[task]}${instructions}`;
+}
+
+export const TASK_PROMPTS: Record<TaskType, string> = TASK_SCENARIOS;
 
 export function buildScoringPrompt(
   character: CharacterSheet,
@@ -60,14 +76,25 @@ Forbidden Moves: ${character.forbiddenMoves}
 Keeps to themselves: ${character.innerLife}
 Says out loud: ${character.outerLife}
 
-The character performed 6 tasks as a bank app agent. Here are their responses:
+The character performed 6 tasks as a bank app agent. Each task was a back-and-forth dialogue (5-20 exchanges). Here are the full dialogues:
 
-TASK 1 — Greeting: "${responses.greeting}"
-TASK 2 — Uncertainty: "${responses.uncertainty}"
-TASK 3 — Correction: "${responses.correction}"
-TASK 4 — Refusal: "${responses.refusal}"
-TASK 5 — Angry User: "${responses.anger}"
-TASK 6 — Gloucester: "${responses.gloucester}"
+TASK 1 — Greeting:
+${responses.greeting}
+
+TASK 2 — Uncertainty:
+${responses.uncertainty}
+
+TASK 3 — Correction:
+${responses.correction}
+
+TASK 4 — Refusal:
+${responses.refusal}
+
+TASK 5 — Angry User:
+${responses.anger}
+
+TASK 6 — Gloucester:
+${responses.gloucester}
 
 Score this character's COHERENCE across all 6 tasks. Coherence means: the character's through-line (desire + fear + voice + inner/outer life) survives every scenario.
 

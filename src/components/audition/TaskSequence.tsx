@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import TaskCard from "./TaskCard";
 import ResponseCard from "./ResponseCard";
 import Button from "@/components/ui/Button";
+import VersaceCigarette from "@/components/ui/VersaceCigarette";
 import { useAppState, useAppDispatch } from "@/lib/context";
 import { performTask } from "@/lib/api";
 import { TASK_ORDER, TASK_META, type TaskType, type CharacterSheet } from "@/lib/types";
@@ -74,16 +75,19 @@ export default function TaskSequence({ onComplete }: TaskSequenceProps) {
 
       {/* Completed task chips */}
       <div className="flex flex-wrap gap-2" role="list" aria-label="Completed tasks">
-        {TASK_ORDER.slice(0, currentTask).map((taskId) => {
+        {TASK_ORDER.slice(0, currentTask).map((taskId, i) => {
           const t = TASK_META[taskId];
+          const accents = ["amber", "teal", "orchid"] as const;
+          const accent = accents[i % 3];
           return (
             <motion.div
               key={taskId}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               role="listitem"
-              className="rounded-full bg-teal/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-teal"
+              className="flex items-center gap-1.5 rounded-full bg-bone/5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-bone"
             >
+              <VersaceCigarette size={14} accent={accent} />
               {t.number} {t.label}
             </motion.div>
           );

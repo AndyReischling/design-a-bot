@@ -16,19 +16,19 @@ export default function Leaderboard({ rankings }: LeaderboardProps) {
 
       {/* Header row */}
       <div className="grid grid-cols-[40px_1fr_80px_80px_80px] gap-2 px-4 py-2">
-        <span className="font-mono text-[10px] uppercase tracking-widest text-ash">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-bone">
           Rank
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-widest text-ash">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-bone">
           Character
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-widest text-ash text-right">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-bone text-right">
           AI
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-widest text-ash text-right">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-bone text-right">
           Audience
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-widest text-ash text-right">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-bone text-right">
           Combined
         </span>
       </div>
@@ -48,7 +48,7 @@ export default function Leaderboard({ rankings }: LeaderboardProps) {
         >
           <span
             className={`font-mono text-lg font-bold ${
-              i === 0 ? "text-amber" : "text-ash"
+              i === 0 ? "text-amber" : "text-bone"
             }`}
           >
             #{i + 1}
@@ -57,7 +57,7 @@ export default function Leaderboard({ rankings }: LeaderboardProps) {
             <p className="font-serif text-base font-semibold text-bone">
               {r.characterName}
             </p>
-            <p className="font-sans text-xs text-ash">{r.playerName}</p>
+            <p className="font-sans text-xs text-bone">{r.playerName}</p>
           </div>
           <p className="text-right font-mono text-sm text-teal">
             {r.coherenceScore}/30
@@ -65,7 +65,7 @@ export default function Leaderboard({ rankings }: LeaderboardProps) {
           <p className="text-right font-mono text-sm text-amber">
             {r.audienceVotePercent}%
           </p>
-          <p className="text-right font-mono text-sm text-bone/60">
+          <p className="text-right font-mono text-sm text-bone">
             {r.combinedRank.toFixed(1)}
           </p>
         </motion.div>

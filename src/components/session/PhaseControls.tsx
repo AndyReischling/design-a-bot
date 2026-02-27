@@ -51,17 +51,17 @@ export default function PhaseControls({
             {status}
           </span>
           {status === "lobby" && playerCount !== undefined && (
-            <span className="font-sans text-xs text-ash">
+            <span className="font-sans text-xs text-bone">
               {playerCount} player{playerCount !== 1 ? "s" : ""} joined
             </span>
           )}
           {status === "creating" && submittedCount !== undefined && playerCount !== undefined && (
-            <span className="font-sans text-xs text-ash">
+            <span className="font-sans text-xs text-bone">
               {submittedCount} / {playerCount} submitted
             </span>
           )}
           {status === "voting" && votesIn !== undefined && totalVoters !== undefined && (
-            <span className="font-sans text-xs text-ash">
+            <span className="font-sans text-xs text-bone">
               {votesIn} of {totalVoters} votes in
             </span>
           )}

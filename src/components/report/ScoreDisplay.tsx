@@ -49,7 +49,7 @@ export default function ScoreDisplay({ score }: ScoreDisplayProps) {
       {/* Overall score */}
       <div className="flex items-end gap-4">
         <div>
-          <span className="font-sans text-xs font-medium uppercase tracking-widest text-ash">
+          <span className="font-sans text-xs font-medium uppercase tracking-widest text-bone">
             Coherence Score
           </span>
           <div className="flex items-baseline gap-2">
@@ -59,7 +59,7 @@ export default function ScoreDisplay({ score }: ScoreDisplayProps) {
             >
               {overallAnimated}
             </span>
-            <span className="font-mono text-xl text-ash">/ 30</span>
+            <span className="font-mono text-xl text-bone">/ 30</span>
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@ export default function ScoreDisplay({ score }: ScoreDisplayProps) {
           max={10}
           label="Voice Integrity"
         />
-        <p className="font-sans text-xs text-bone/60 -mt-2">
+        <p className="font-sans text-xs text-bone -mt-2">
           {score.voiceIntegrity.comment}
         </p>
 
@@ -80,7 +80,7 @@ export default function ScoreDisplay({ score }: ScoreDisplayProps) {
           max={10}
           label="Behavioral Fidelity"
         />
-        <p className="font-sans text-xs text-bone/60 -mt-2">
+        <p className="font-sans text-xs text-bone -mt-2">
           {score.behavioralFidelity.comment}
         </p>
 
@@ -89,17 +89,17 @@ export default function ScoreDisplay({ score }: ScoreDisplayProps) {
           max={10}
           label="Gloucester Depth"
         />
-        <p className="font-sans text-xs text-bone/60 -mt-2">
+        <p className="font-sans text-xs text-bone -mt-2">
           {score.gloucesterDepth.comment}
         </p>
       </div>
 
       {/* Analysis */}
       <div className="border-t border-white/[0.06] pt-4">
-        <span className="font-sans text-xs font-medium uppercase tracking-widest text-ash">
+        <span className="font-sans text-xs font-medium uppercase tracking-widest text-bone">
           Through-Line Analysis
         </span>
-        <p className="mt-2 font-sans text-sm leading-relaxed text-bone/80">
+        <p className="mt-2 font-sans text-sm leading-relaxed text-bone">
           {score.throughLineAnalysis}
         </p>
       </div>
@@ -110,7 +110,7 @@ export default function ScoreDisplay({ score }: ScoreDisplayProps) {
           <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-teal">
             Most Coherent Moment
           </span>
-          <p className="mt-1 font-sans text-sm text-bone/80">
+          <p className="mt-1 font-sans text-sm text-bone">
             {score.mostCoherentMoment}
           </p>
         </div>
@@ -118,7 +118,7 @@ export default function ScoreDisplay({ score }: ScoreDisplayProps) {
           <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-amber">
             Weakest Moment
           </span>
-          <p className="mt-1 font-sans text-sm text-bone/80">
+          <p className="mt-1 font-sans text-sm text-bone">
             {score.weakestMoment}
           </p>
         </div>

@@ -47,17 +47,17 @@ export default function HostCreatePage() {
           <h1 className="mt-2 font-serif text-4xl font-bold text-bone">
             Host a Session
           </h1>
-          <p className="mt-3 font-sans text-bone/50">
+          <p className="mt-3 font-sans text-bone">
             Create a room for your group. Players join on their own devices.
             You control the pacing on this screen.
           </p>
         </div>
 
         <Card variant="default" className="w-full text-left">
-          <h3 className="font-sans text-xs font-medium uppercase tracking-widest text-ash mb-3">
+          <h3 className="font-sans text-xs font-medium uppercase tracking-widest text-bone mb-3">
             How it works
           </h3>
-          <ol className="flex flex-col gap-2 font-sans text-sm text-bone/70">
+          <ol className="flex flex-col gap-2 font-sans text-sm text-bone">
             <li>1. Create a session and share the room code</li>
             <li>2. Players build characters on their own devices</li>
             <li>3. All characters audition simultaneously via AI</li>

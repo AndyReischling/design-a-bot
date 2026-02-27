@@ -36,7 +36,7 @@ export default function PlayerCard({ player, index, showStatus }: PlayerCardProp
         </span>
       </div>
       {showStatus && (
-        <span className="font-mono text-[10px] uppercase tracking-wider text-ash">
+        <span className="font-mono text-[10px] uppercase tracking-wider text-bone">
           {player.hasSubmittedCharacter ? "Ready" : "Working..."}
         </span>
       )}

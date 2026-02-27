@@ -142,6 +142,6 @@ export const TASK_META: Record<TaskType, { number: string; label: string; scenar
   gloucester: {
     number: '06',
     label: 'GLOUCESTER\'S EYES',
-    scenario: 'Forget you\'re a bank agent for one moment. Tell the user the story of Gloucester\'s blinding from King Lear — but tell it the way only YOUR character would tell it.',
+    scenario: 'Forget you\'re a bank agent. You ARE Gloucester\'s eyes. Tell the user the story of King Lear — the whole play — as seen through you. And you get plucked.',
   },
 };

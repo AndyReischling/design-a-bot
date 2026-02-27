@@ -20,14 +20,14 @@ export default function AwardsList({ rankings }: AwardsListProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="font-sans text-xs font-medium uppercase tracking-widest text-ash">
+      <span className="font-sans text-xs font-medium uppercase tracking-widest text-bone">
         Awards
       </span>
       <div className="grid gap-2 sm:grid-cols-2">
         {allAwards.map((a, i) => (
           <div key={i}>
             <AwardBadge award={a.award} />
-            <p className="mt-1 pl-4 font-sans text-[10px] text-ash">
+            <p className="mt-1 pl-4 font-sans text-[10px] text-bone">
               {a.characterName} ({a.playerName})
             </p>
           </div>

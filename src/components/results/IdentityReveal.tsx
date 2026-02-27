@@ -31,7 +31,7 @@ export default function IdentityReveal({ rankings, onComplete }: IdentityRevealP
                 style={{ perspective: 1000 }}
               >
                 <Card variant="active">
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-ash">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-bone">
                     {r.botLabel}
                   </span>
                   <h3 className="mt-1 font-serif text-xl font-bold text-bone">
@@ -42,7 +42,7 @@ export default function IdentityReveal({ rankings, onComplete }: IdentityRevealP
               </motion.div>
             ) : (
               <Card variant="default" className="flex items-center justify-center min-h-[100px]">
-                <span className="font-mono text-lg text-ash/30">{r.botLabel}</span>
+                <span className="font-mono text-lg text-bone">{r.botLabel}</span>
               </Card>
             )}
           </AnimatePresence>

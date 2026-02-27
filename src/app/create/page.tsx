@@ -80,7 +80,7 @@ export default function CreatePage() {
           <h1 className="mt-2 font-serif text-4xl font-bold text-bone">
             Build Your Character
           </h1>
-          <p className="mt-2 max-w-lg font-sans text-bone/50">
+          <p className="mt-2 max-w-lg font-sans text-bone">
             Fill out each section to bring your character to life. The next
             section reveals as you complete the current one.
           </p>

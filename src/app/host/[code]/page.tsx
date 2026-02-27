@@ -77,7 +77,7 @@ export default function HostSessionPage() {
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="font-sans text-bone/50">{error}</p>
+        <p className="font-sans text-bone">{error}</p>
       </div>
     );
   }
@@ -127,7 +127,7 @@ export default function HostSessionPage() {
               <h1 className="mt-2 font-serif text-3xl font-bold text-bone md:text-4xl">
                 Characters are being built...
               </h1>
-              <p className="mt-2 font-mono text-sm text-ash">
+              <p className="mt-2 font-mono text-sm text-bone">
                 Room: {code}
               </p>
             </div>
@@ -147,7 +147,7 @@ export default function HostSessionPage() {
               <h1 className="font-serif text-3xl font-bold text-bone md:text-4xl">
                 The auditions are underway
               </h1>
-              <p className="mt-2 font-sans text-bone/50">
+              <p className="mt-2 font-sans text-bone">
                 Generating responses for {session.characters.length} characters
                 across 6 scenarios...
               </p>
@@ -189,7 +189,7 @@ export default function HostSessionPage() {
               <span className="font-mono text-xs uppercase tracking-widest text-orchid">
                 Task {currentMeta.number} — {currentMeta.label}
               </span>
-              <p className="mx-auto mt-3 max-w-2xl font-sans text-xl leading-relaxed text-bone/80 md:text-2xl">
+              <p className="mx-auto mt-3 max-w-2xl font-sans text-xl leading-relaxed text-bone md:text-2xl">
                 {currentMeta.scenario}
               </p>
             </div>
@@ -200,7 +200,7 @@ export default function HostSessionPage() {
                   <span className="font-mono text-xs uppercase tracking-wider text-orchid">
                     {c.botLabel}
                   </span>
-                  <p className="mt-2 font-sans text-base leading-relaxed text-bone/90 whitespace-pre-wrap md:text-lg">
+                  <p className="mt-2 font-sans text-base leading-relaxed text-bone whitespace-pre-wrap md:text-lg">
                     {c.responses[currentTaskId] || "..."}
                   </p>
                 </Card>

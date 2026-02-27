@@ -76,7 +76,7 @@ export default function ReportPage() {
           <h1 className="font-serif text-2xl font-semibold text-bone">
             No results yet
           </h1>
-          <p className="mt-2 font-sans text-bone/50">
+          <p className="mt-2 font-sans text-bone">
             Complete an audition to see the coherence report.
           </p>
           <Button
@@ -122,7 +122,7 @@ export default function ReportPage() {
         {loading && (
           <div className="flex flex-col items-center gap-4 py-16">
             <LoadingOrb size={48} />
-            <p className="font-sans text-sm text-ash" aria-live="polite">
+            <p className="font-sans text-sm text-bone" aria-live="polite">
               Evaluating coherence across all six performances...
             </p>
           </div>
@@ -167,7 +167,7 @@ export default function ReportPage() {
 
             {/* Moment-by-moment breakdown */}
             <div>
-              <span className="mb-4 block font-sans text-xs font-medium uppercase tracking-widest text-ash">
+              <span className="mb-4 block font-sans text-xs font-medium uppercase tracking-widest text-bone">
                 Moment-by-Moment Breakdown
               </span>
               <div className="flex flex-col gap-3">
@@ -182,6 +182,7 @@ export default function ReportPage() {
                       response={r?.response || "No response recorded"}
                       coherenceScore={score.perTaskScores?.[i] || 3}
                       index={i}
+                      characterName={character?.name}
                     />
                   );
                 })}

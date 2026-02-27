@@ -38,7 +38,7 @@ export default function ArchivePage() {
           <h1 className="mt-2 font-serif text-4xl font-bold text-bone">
             The Archive
           </h1>
-          <p className="mt-2 max-w-lg font-sans text-bone/50">
+          <p className="mt-2 max-w-lg font-sans text-bone">
             Sixty characters from literature, mythology, theater, film, and
             television — each fully realized as a bank agent candidate. Use
             them as inspiration or run them through the audition yourself.

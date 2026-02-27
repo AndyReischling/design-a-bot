@@ -25,7 +25,7 @@ export default function AuditionPage() {
           <h1 className="font-serif text-2xl font-semibold text-bone">
             No character found
           </h1>
-          <p className="mt-2 font-sans text-bone/50">
+          <p className="mt-2 font-sans text-bone">
             Create a character first before the audition.
           </p>
           <Button
@@ -66,7 +66,7 @@ export default function AuditionPage() {
         >
           <button
             onClick={() => setShowCharacter(!showCharacter)}
-            className="mb-2 flex items-center gap-2 font-sans text-xs uppercase tracking-wider text-ash transition-colors hover:text-bone"
+            className="mb-2 flex items-center gap-2 font-sans text-xs uppercase tracking-wider text-bone transition-colors hover:text-bone"
           >
             <svg
               width="12"
@@ -105,7 +105,7 @@ export default function AuditionPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <p className="max-w-md font-sans text-base leading-relaxed text-bone/70">
+              <p className="max-w-md font-sans text-base leading-relaxed text-bone">
                 Your character has been hired as a customer service agent at a
                 bank app. They must now handle six scenarios — as themselves.
               </p>

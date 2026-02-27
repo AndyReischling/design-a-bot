@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useId } from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 
 interface RobotAvatarProps {
@@ -63,7 +63,7 @@ export default function RobotAvatar({
     return () => clearTimeout(timeout);
   }, [interactive]);
 
-  const uid = useRef(`rob-${Math.random().toString(36).slice(2, 8)}`).current;
+  const uid = `rob-${useId().replace(/:/g, "")}`;
 
   return (
     <motion.div

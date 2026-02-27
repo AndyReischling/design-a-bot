@@ -18,7 +18,7 @@ export default function SessionProgressBar({
   return (
     <div className="flex flex-col gap-2">
       {label && (
-        <span className="font-sans text-xs text-ash">{label}</span>
+        <span className="font-sans text-xs text-bone">{label}</span>
       )}
       <div className="h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
         <motion.div
@@ -30,7 +30,7 @@ export default function SessionProgressBar({
         />
       </div>
       <div className="flex justify-between">
-        <span className="font-mono text-xs text-ash">{completed} / {total}</span>
+        <span className="font-mono text-xs text-bone">{completed} / {total}</span>
         <span className="font-mono text-xs text-amber">{pct}%</span>
       </div>
     </div>

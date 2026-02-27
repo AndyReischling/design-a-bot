@@ -91,7 +91,7 @@ export default function HostResultsPage() {
           >
             <button
               onClick={() => setPhase("leaderboard")}
-              className="self-start font-sans text-xs text-ash hover:text-bone"
+              className="self-start font-sans text-xs text-bone hover:text-bone"
             >
               &larr; Back to leaderboard
             </button>

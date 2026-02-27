@@ -6,6 +6,7 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Particles from "@/components/ui/Particles";
 import RobotAvatar from "@/components/ui/RobotAvatar";
+import VersaceCigarette from "@/components/ui/VersaceCigarette";
 
 const stagger = {
   hidden: {},
@@ -44,22 +45,21 @@ export default function LandingPage() {
         </motion.div>
 
         {/* Title */}
-        <motion.h1
+        <motion.div
           variants={fadeUp}
-          className="font-serif text-6xl font-bold tracking-tight sm:text-7xl md:text-8xl"
-          style={{
-            color: "var(--amber)",
-            textShadow:
-              "0 0 40px rgba(232, 148, 58, 0.3), 0 0 80px rgba(232, 148, 58, 0.15)",
-          }}
+          className="flex items-center justify-center gap-4 sm:gap-6"
         >
-          THE AUDITION
-        </motion.h1>
+          <VersaceCigarette size={40} accent="amber" className="hidden sm:block" />
+          <h1 className="font-serif text-6xl font-bold tracking-tight text-bone sm:text-7xl md:text-8xl">
+            THE AUDITION
+          </h1>
+          <VersaceCigarette size={40} accent="orchid" className="hidden sm:block" />
+        </motion.div>
 
         {/* Subtitle */}
         <motion.p
           variants={fadeUp}
-          className="max-w-md font-sans text-lg text-bone/70 sm:text-xl"
+          className="max-w-md font-sans text-lg text-bone sm:text-xl"
         >
           Design a character. Give them a job. See if they hold together.
         </motion.p>
@@ -68,9 +68,9 @@ export default function LandingPage() {
         <motion.div variants={fadeUp}>
           <Card
             variant="default"
-            className="max-w-lg border-white/[0.04] bg-surface/80 backdrop-blur-sm"
+            className="max-w-lg border-bone/10 bg-surface/80 backdrop-blur-sm"
           >
-            <p className="font-sans text-sm leading-relaxed text-bone/60">
+            <p className="font-sans text-sm leading-relaxed text-bone">
               You&rsquo;ll build a fictional character from scratch — their voice,
               their fears, their signature moves. Then they&rsquo;ll be hired as a
               customer service agent at a bank app and face six escalating
@@ -94,7 +94,7 @@ export default function LandingPage() {
             </Button>
           </Link>
           <Link href="/join">
-            <Button variant="ghost" className="px-8 py-4 text-base">
+            <Button variant="accent" className="px-8 py-4 text-base">
               Join a Session
             </Button>
           </Link>

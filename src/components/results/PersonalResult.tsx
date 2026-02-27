@@ -23,7 +23,7 @@ export default function PersonalResult({
       <h3 className="mt-1 font-serif text-xl font-bold text-bone">
         {ranking.characterName}
       </h3>
-      <p className="font-sans text-sm text-ash">
+      <p className="font-sans text-sm text-bone">
         Placed #{Math.round(ranking.combinedRank)} of {totalPlayers} overall
       </p>
 
@@ -46,19 +46,19 @@ export default function PersonalResult({
             <p className="font-mono text-sm text-teal">
               {character.coherenceScore.voiceIntegrity.score}/10
             </p>
-            <p className="font-sans text-[10px] text-ash">Voice</p>
+            <p className="font-sans text-[10px] text-bone">Voice</p>
           </div>
           <div className="text-center">
             <p className="font-mono text-sm text-amber">
               {character.coherenceScore.behavioralFidelity.score}/10
             </p>
-            <p className="font-sans text-[10px] text-ash">Behavior</p>
+            <p className="font-sans text-[10px] text-bone">Behavior</p>
           </div>
           <div className="text-center">
             <p className="font-mono text-sm text-orchid">
               {character.coherenceScore.gloucesterDepth.score}/10
             </p>
-            <p className="font-sans text-[10px] text-ash">Gloucester</p>
+            <p className="font-sans text-[10px] text-bone">Gloucester</p>
           </div>
         </div>
       )}

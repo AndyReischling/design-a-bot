@@ -11,7 +11,7 @@ interface RoomCodeProps {
 export default function RoomCode({ code, joinUrl }: RoomCodeProps) {
   return (
     <Card variant="highlight" className="text-center">
-      <p className="font-sans text-xs font-medium uppercase tracking-widest text-ash mb-3">
+      <p className="font-sans text-xs font-medium uppercase tracking-widest text-bone mb-3">
         Room Code
       </p>
       <motion.p
@@ -23,7 +23,7 @@ export default function RoomCode({ code, joinUrl }: RoomCodeProps) {
       >
         {code}
       </motion.p>
-      <p className="mt-4 font-sans text-sm text-bone/50 break-all">
+      <p className="mt-4 font-sans text-sm text-bone break-all">
         Join at: <span className="text-teal">{joinUrl}</span>
       </p>
     </Card>

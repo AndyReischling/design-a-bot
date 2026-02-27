@@ -11,11 +11,11 @@ interface CardProps extends HTMLMotionProps<"div"> {
 }
 
 const variantStyles: Record<CardVariant, string> = {
-  default: "border-white/[0.06] hover:border-amber/40",
-  active: "border-l-[3px] border-l-amber border-white/[0.06]",
-  highlight: "border-white/[0.06] bg-glow-amber",
-  archive: "border-white/[0.06] hover:border-orchid/40",
-  score: "border-white/[0.06] bg-[#0e0e18]",
+  default: "border-bone/10 hover:border-amber/50",
+  active: "border-l-[3px] border-l-amber border-bone/10",
+  highlight: "border-bone/10 bg-amber/10",
+  archive: "border-bone/10 hover:border-orchid/50",
+  score: "border-bone/10 bg-surface",
 };
 
 export default function Card({
@@ -30,7 +30,7 @@ export default function Card({
         rounded-xl border bg-surface p-6
         transition-all duration-300 ease-out
         hover:-translate-y-0.5
-        hover:shadow-[0_4px_24px_rgba(232,148,58,0.08)]
+        hover:shadow-[0_4px_24px_rgba(245,213,71,0.15)]
         ${variantStyles[variant]}
         ${className}
       `}

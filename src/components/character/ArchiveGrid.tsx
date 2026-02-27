@@ -41,7 +41,7 @@ export default function ArchiveGrid({ onSelect }: ArchiveGridProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="font-sans text-sm text-ash">Loading archive...</p>
+        <p className="font-sans text-sm text-bone">Loading archive...</p>
       </div>
     );
   }
@@ -49,7 +49,7 @@ export default function ArchiveGrid({ onSelect }: ArchiveGridProps) {
   if (characters.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="font-sans text-sm text-ash">
+        <p className="font-sans text-sm text-bone">
           No archive data found. Run the generation script to populate.
         </p>
       </div>
@@ -65,7 +65,7 @@ export default function ArchiveGrid({ onSelect }: ArchiveGridProps) {
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      <p className="font-sans text-xs text-ash">
+      <p className="font-sans text-xs text-bone">
         {filtered.length} character{filtered.length !== 1 ? "s" : ""}
       </p>
 
@@ -93,11 +93,11 @@ export default function ArchiveGrid({ onSelect }: ArchiveGridProps) {
               <h3 className="font-serif text-base font-semibold text-bone">
                 {char.name}
               </h3>
-              <p className="mt-0.5 line-clamp-1 font-sans text-xs text-bone/60">
+              <p className="mt-0.5 line-clamp-1 font-sans text-xs text-bone">
                 {char.backstory}
               </p>
               {char.source && (
-                <p className="mt-1 font-sans text-[10px] uppercase tracking-wider text-ash">
+                <p className="mt-1 font-sans text-[10px] uppercase tracking-wider text-bone">
                   {char.source}
                 </p>
               )}
@@ -157,10 +157,10 @@ export default function ArchiveGrid({ onSelect }: ArchiveGridProps) {
 function Detail({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-ash">
+      <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-bone">
         {label}
       </span>
-      <p className="font-sans text-xs text-bone/70">{value}</p>
+      <p className="font-sans text-xs text-bone">{value}</p>
     </div>
   );
 }

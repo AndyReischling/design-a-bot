@@ -26,7 +26,7 @@ export default function ThroughLineChart({
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="font-sans text-xs font-medium uppercase tracking-widest text-ash">
+      <span className="font-sans text-xs font-medium uppercase tracking-widest text-bone">
         Through-Line Graph
       </span>
 
@@ -86,7 +86,7 @@ export default function ThroughLineChart({
         </ResponsiveContainer>
       </div>
 
-      <p className="text-center font-sans text-xs italic text-ash">
+      <p className="text-center font-sans text-xs italic text-bone">
         A flat line near the top = coherent. A jagged drop under pressure =
         cracked.
       </p>

@@ -22,11 +22,11 @@ function Placeholder({ width = "100%" }: { width?: string }) {
 function Field({ label, value }: { label: string; value?: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-ash">
+      <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-bone">
         {label}
       </span>
       {value ? (
-        <p className="font-sans text-sm text-bone/80">{value}</p>
+        <p className="font-sans text-sm text-bone">{value}</p>
       ) : (
         <Placeholder width="70%" />
       )}
@@ -78,11 +78,11 @@ export default function CharacterCard({
           </span>
           <h2 className="mt-1 font-serif text-2xl font-bold text-bone">
             {character.name || (
-              <span className="text-ash/40 italic">Unnamed</span>
+              <span className="text-bone italic">Unnamed</span>
             )}
           </h2>
           {character.source && (
-            <p className="font-sans text-xs text-ash mt-0.5">{character.source}</p>
+            <p className="font-sans text-xs text-bone mt-0.5">{character.source}</p>
           )}
         </div>
         <ProgressRing progress={progress} size={52} strokeWidth={3} />
@@ -121,7 +121,7 @@ export default function CharacterCard({
           {character.signatureMoves &&
             character.signatureMoves.some((m) => m.trim()) && (
               <div className="flex flex-col gap-1">
-                <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-ash">
+                <span className="font-sans text-[10px] font-medium uppercase tracking-widest text-bone">
                   Signature Moves
                 </span>
                 <ul className="flex flex-col gap-0.5">
@@ -130,7 +130,7 @@ export default function CharacterCard({
                     .map((m, i) => (
                       <li
                         key={i}
-                        className="font-sans text-sm text-bone/80 before:mr-2 before:text-amber before:content-['›']"
+                        className="font-sans text-sm text-bone before:mr-2 before:text-amber before:content-['›']"
                       >
                         {m}
                       </li>

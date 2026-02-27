@@ -31,7 +31,7 @@ export default function JoinPage() {
           <h1 className="font-serif text-3xl font-bold text-bone">
             Join a Session
           </h1>
-          <p className="mt-2 font-sans text-sm text-bone/50">
+          <p className="mt-2 font-sans text-sm text-bone">
             Enter the 4-character room code shown on the host screen.
           </p>
         </div>

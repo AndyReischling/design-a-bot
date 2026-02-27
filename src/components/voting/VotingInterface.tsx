@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import DialogueBlock from "@/components/ui/DialogueBlock";
 
 interface BotResponse {
   botLabel: string;
@@ -34,14 +35,14 @@ export default function VotingInterface({
             <path d="M3 8.5L6.5 12L13 4" stroke="var(--teal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-        <p className="font-sans text-sm text-ash">Vote submitted. Waiting for others...</p>
+        <p className="font-sans text-sm text-bone">Vote submitted. Waiting for others...</p>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="font-sans text-xs font-medium uppercase tracking-widest text-ash">
+      <p className="font-sans text-xs font-medium uppercase tracking-widest text-bone">
         Tap the most believable response
       </p>
 
@@ -62,7 +63,7 @@ export default function VotingInterface({
                 ${
                   isSelected
                     ? "border-amber/60 bg-amber/5 shadow-[0_0_16px_rgba(232,148,58,0.1)]"
-                    : "border-white/[0.06] bg-surface hover:border-white/[0.12]"
+                    : "border-bone/10 bg-surface hover:border-amber/40"
                 }
               `}
               whileTap={!disabled ? { scale: 0.98 } : {}}
@@ -73,11 +74,17 @@ export default function VotingInterface({
                     {r.botLabel}
                   </span>
                   {r.isSelf && !allowSelfVote && (
-                    <span className="ml-2 font-sans text-[10px] text-ash">(yours)</span>
+                    <span className="ml-2 font-sans text-[10px] text-bone">(yours)</span>
                   )}
-                  <p className="mt-1 font-sans text-sm leading-relaxed text-bone/80 whitespace-pre-wrap">
-                    {r.response}
-                  </p>
+                  <div className="mt-1">
+                    {/USER:\s/i.test(r.response) || /^[A-Za-z\s]+:\s/m.test(r.response) ? (
+                      <DialogueBlock text={r.response} />
+                    ) : (
+                      <p className="font-sans text-sm leading-relaxed text-bone whitespace-pre-wrap">
+                        {r.response}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div
                   className={`mt-1 h-5 w-5 shrink-0 rounded-full border-2 transition-all ${

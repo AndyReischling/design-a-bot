@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { advancePhase, getSession, setCharacterResponses, setCharacterScore, updateAuditionProgress, updateSessionStatus } from "@/lib/session";
-import { buildSystemPrompt, TASK_PROMPTS, buildScoringPrompt } from "@/lib/prompts";
+import { buildSystemPrompt, buildTaskPrompt, buildScoringPrompt } from "@/lib/prompts";
 import { parseScoreResponse } from "@/lib/scoring";
 import OpenAI from "openai";
 import type { CharacterSheet, CharacterWithAudition, TaskType } from "@/lib/types";
@@ -10,11 +10,11 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 async function generateResponse(character: CharacterSheet, task: TaskType): Promise<string> {
   const systemPrompt = buildSystemPrompt(character);
-  const taskPrompt = TASK_PROMPTS[task];
+  const taskPrompt = buildTaskPrompt(character, task);
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o",
-    max_tokens: 1000,
+    max_tokens: 4096,
     temperature: 0.9,
     messages: [
       { role: "system", content: systemPrompt },

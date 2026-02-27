@@ -49,7 +49,7 @@ export default function VoteReveal({ results, maxVotes }: VoteRevealProps) {
                   Round Winner
                 </motion.p>
               )}
-              <p className="font-sans text-xs leading-relaxed text-bone/60 line-clamp-3">
+              <p className="font-sans text-xs leading-relaxed text-bone line-clamp-3">
                 {r.response}
               </p>
             </Card>

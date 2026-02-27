@@ -20,7 +20,7 @@ export default function GlowBar({
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
       <div className="flex items-center justify-between">
-        <span className="font-sans text-xs font-medium uppercase tracking-widest text-ash">
+        <span className="font-sans text-xs font-medium uppercase tracking-widest text-bone">
           {label}
         </span>
         <span className="font-mono text-sm text-amber">

@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Outfit, JetBrains_Mono } from "next/font/google";
+import { Cormorant, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { AppProvider } from "@/lib/context";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const cormorant = Cormorant({
+  variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playfair.variable} ${outfit.variable} ${jetbrains.variable} antialiased`}
+        className={`${cormorant.variable} ${dmSans.variable} ${jetbrains.variable} antialiased`}
       >
         <AppProvider>{children}</AppProvider>
       </body>

@@ -3,7 +3,7 @@
 import { motion, type HTMLMotionProps } from "framer-motion";
 import LoadingOrb from "./LoadingOrb";
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "accent" | "ghost";
 
 interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
   variant?: ButtonVariant;
@@ -15,11 +15,13 @@ interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-amber text-void font-semibold hover:bg-amber/90 shadow-[0_0_20px_rgba(232,148,58,0.2)]",
+    "bg-amber text-white font-semibold hover:brightness-90 active:brightness-85 shadow-[0_0_20px_rgba(245,213,71,0.25)]",
   secondary:
-    "bg-transparent border border-teal/40 text-teal hover:bg-teal/10 hover:border-teal/60",
+    "bg-transparent border-2 border-teal text-teal hover:bg-teal hover:text-white hover:border-teal",
+  accent:
+    "bg-orchid text-white font-semibold hover:brightness-90 active:brightness-85",
   ghost:
-    "bg-transparent text-bone/70 hover:text-bone hover:bg-white/5",
+    "bg-transparent text-bone hover:bg-bone/10",
 };
 
 export default function Button({

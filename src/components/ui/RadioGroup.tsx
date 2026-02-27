@@ -17,7 +17,7 @@ export default function RadioGroup({
 }: RadioGroupProps) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="font-sans text-xs font-medium uppercase tracking-widest text-ash">
+      <span className="font-sans text-xs font-medium uppercase tracking-widest text-bone">
         {label}
       </span>
       <div className="flex rounded-lg border border-white/[0.06] bg-void p-1">
@@ -32,7 +32,7 @@ export default function RadioGroup({
               ${
                 value === option.value
                   ? "bg-amber/15 text-amber shadow-[inset_0_0_12px_rgba(232,148,58,0.1)]"
-                  : "text-ash hover:text-bone"
+                  : "text-bone hover:text-bone"
               }
             `}
           >
@@ -41,7 +41,7 @@ export default function RadioGroup({
         ))}
       </div>
       {helperText && (
-        <p className="font-sans text-xs text-ash/70 italic">{helperText}</p>
+        <p className="font-sans text-xs text-bone italic">{helperText}</p>
       )}
     </div>
   );

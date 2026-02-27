@@ -54,13 +54,13 @@ export default function ArchiveDrawer({
                 <h2 className="font-serif text-xl font-semibold text-bone">
                   Character Archive
                 </h2>
-                <p className="font-sans text-xs text-ash">
+                <p className="font-sans text-xs text-bone">
                   60 characters for inspiration
                 </p>
               </div>
               <button
                 onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-ash transition-colors hover:bg-white/5 hover:text-bone"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-bone transition-colors hover:bg-white/5 hover:text-bone"
                 aria-label="Close archive"
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

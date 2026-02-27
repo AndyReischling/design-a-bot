@@ -28,7 +28,7 @@ export default function CharacterDeepDive({
           <p className="font-serif text-base font-semibold text-bone">
             {character.name}
           </p>
-          <p className="font-sans text-xs text-ash">{playerName} / {character.botLabel}</p>
+          <p className="font-sans text-xs text-bone">{playerName} / {character.botLabel}</p>
         </div>
         <div className="flex items-center gap-3">
           {score && (
@@ -40,7 +40,7 @@ export default function CharacterDeepDive({
             width="12"
             height="12"
             viewBox="0 0 12 12"
-            className={`text-ash transition-transform ${expanded ? "rotate-90" : ""}`}
+            className={`text-bone transition-transform ${expanded ? "rotate-90" : ""}`}
           >
             <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" />
           </svg>
@@ -59,18 +59,18 @@ export default function CharacterDeepDive({
             <div className="mt-4 flex flex-col gap-4 border-t border-white/[0.06] pt-4">
               <div className="flex flex-col gap-3">
                 <GlowBar value={score.voiceIntegrity.score} max={10} label="Voice Integrity" />
-                <p className="font-sans text-xs text-bone/50">{score.voiceIntegrity.comment}</p>
+                <p className="font-sans text-xs text-bone">{score.voiceIntegrity.comment}</p>
                 <GlowBar value={score.behavioralFidelity.score} max={10} label="Behavioral Fidelity" />
-                <p className="font-sans text-xs text-bone/50">{score.behavioralFidelity.comment}</p>
+                <p className="font-sans text-xs text-bone">{score.behavioralFidelity.comment}</p>
                 <GlowBar value={score.gloucesterDepth.score} max={10} label="Gloucester Depth" />
-                <p className="font-sans text-xs text-bone/50">{score.gloucesterDepth.comment}</p>
+                <p className="font-sans text-xs text-bone">{score.gloucesterDepth.comment}</p>
               </div>
 
               <div>
-                <span className="font-sans text-xs font-medium uppercase tracking-widest text-ash">
+                <span className="font-sans text-xs font-medium uppercase tracking-widest text-bone">
                   Through-Line Analysis
                 </span>
-                <p className="mt-1 font-sans text-sm text-bone/70">{score.throughLineAnalysis}</p>
+                <p className="mt-1 font-sans text-sm text-bone">{score.throughLineAnalysis}</p>
               </div>
 
               {score.perTaskScores && (
@@ -89,6 +89,7 @@ export default function CharacterDeepDive({
                       response={response}
                       coherenceScore={score.perTaskScores?.[i] || 3}
                       index={i}
+                      characterName={character.name}
                     />
                   ) : null;
                 })}

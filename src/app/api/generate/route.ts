@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { buildSystemPrompt, TASK_PROMPTS, buildScoringPrompt } from "@/lib/prompts";
+import { buildSystemPrompt, buildTaskPrompt, buildScoringPrompt } from "@/lib/prompts";
 import { parseScoreResponse } from "@/lib/scoring";
 import type { CharacterSheet, TaskType } from "@/lib/types";
 
@@ -20,16 +20,17 @@ export async function POST(request: Request) {
     }
 
     if (type === "audition_task") {
-      if (!task || !TASK_PROMPTS[task as TaskType]) {
+      const taskTypes: TaskType[] = ["greeting", "uncertainty", "correction", "refusal", "anger", "gloucester"];
+      if (!task || !taskTypes.includes(task as TaskType)) {
         return NextResponse.json({ error: "Valid task type is required" }, { status: 400 });
       }
 
       const systemPrompt = buildSystemPrompt(character as CharacterSheet);
-      const taskPrompt = TASK_PROMPTS[task as TaskType];
+      const taskPrompt = buildTaskPrompt(character as CharacterSheet, task as TaskType);
 
       const completion = await openai.chat.completions.create({
         model: MODEL,
-        max_tokens: 1024,
+        max_tokens: 4096,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: taskPrompt },
