@@ -28,6 +28,8 @@ export default function PlayerPage() {
   const [character, setCharacter] = useState<Partial<CharacterSheet>>({
     signatureMoves: ["", "", "", "", ""],
   });
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarLoading, setAvatarLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [votedTasks, setVotedTasks] = useState<Set<number>>(new Set());
@@ -97,6 +99,21 @@ export default function PlayerPage() {
     setCharacter({ ...fields, signatureMoves: [...fields.signatureMoves] });
     setDrawerOpen(false);
   }, []);
+
+  const handleGenerateAvatar = useCallback(() => {
+    setAvatarLoading(true);
+    fetch("/api/avatar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ character }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.url) setAvatarUrl(data.url);
+      })
+      .catch(() => {})
+      .finally(() => setAvatarLoading(false));
+  }, [character]);
 
   const handleSubmitCharacter = useCallback(async () => {
     if (!playerId) return;
@@ -237,7 +254,13 @@ export default function PlayerPage() {
               <h2 className="font-serif text-xl font-bold text-bone">
                 Build Your Character
               </h2>
-              <CharacterForm character={character} onChange={handleCharacterChange} />
+              <CharacterForm
+                character={character}
+                onChange={handleCharacterChange}
+                avatarUrl={avatarUrl}
+                onGenerateAvatar={handleGenerateAvatar}
+                avatarLoading={avatarLoading}
+              />
               <div className="flex gap-3">
                 <Button
                   variant="primary"
