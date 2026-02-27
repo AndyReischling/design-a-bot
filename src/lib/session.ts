@@ -1,22 +1,51 @@
+import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync, statSync } from "fs";
+import { join } from "path";
 import type { Session, SessionSettings, Player, CharacterSheet, CharacterWithAudition, Vote, TaskType } from "./types";
 
-const globalStore = globalThis as unknown as { __sessions?: Map<string, Session> };
-if (!globalStore.__sessions) {
-  globalStore.__sessions = new Map<string, Session>();
-}
-const sessions = globalStore.__sessions;
-
-const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
-
+const SESSION_DIR = join("/tmp", "bot-idol-sessions");
+const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
 const SAFE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const BOT_LABELS = "ABCDEFGHIJKLMNOPQRST".split("").map((c) => `Bot ${c}`);
+
+function ensureDir() {
+  if (!existsSync(SESSION_DIR)) {
+    mkdirSync(SESSION_DIR, { recursive: true });
+  }
+}
+
+function sessionPath(code: string): string {
+  return join(SESSION_DIR, `${code.toUpperCase()}.json`);
+}
+
+function readSession(code: string): Session | null {
+  const p = sessionPath(code);
+  if (!existsSync(p)) return null;
+  try {
+    const raw = readFileSync(p, "utf-8");
+    return JSON.parse(raw) as Session;
+  } catch {
+    return null;
+  }
+}
+
+function writeSession(session: Session): void {
+  ensureDir();
+  writeFileSync(sessionPath(session.code), JSON.stringify(session), "utf-8");
+}
 
 function generateCode(): string {
+  ensureDir();
+  const existing = new Set(
+    readdirSync(SESSION_DIR)
+      .filter((f) => f.endsWith(".json"))
+      .map((f) => f.replace(".json", ""))
+  );
   let code: string;
   do {
     code = Array.from({ length: 4 }, () =>
       SAFE_CHARS[Math.floor(Math.random() * SAFE_CHARS.length)]
     ).join("");
-  } while (sessions.has(code));
+  } while (existing.has(code));
   return code;
 }
 
@@ -25,15 +54,20 @@ function generateId(): string {
 }
 
 function pruneExpired() {
+  ensureDir();
   const now = Date.now();
-  for (const [code, session] of sessions) {
-    if (now - session.createdAt > SESSION_TTL_MS) {
-      sessions.delete(code);
+  try {
+    for (const file of readdirSync(SESSION_DIR)) {
+      const p = join(SESSION_DIR, file);
+      try {
+        const stat = statSync(p);
+        if (now - stat.mtimeMs > SESSION_TTL_MS) {
+          unlinkSync(p);
+        }
+      } catch { /* ignore */ }
     }
-  }
+  } catch { /* ignore */ }
 }
-
-const BOT_LABELS = "ABCDEFGHIJKLMNOPQRST".split("").map((c) => `Bot ${c}`);
 
 function shuffleArray<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -66,13 +100,16 @@ export function createSession(settings?: Partial<SessionSettings>): { code: stri
     },
   };
 
-  sessions.set(code, session);
+  writeSession(session);
   return { code, hostId };
 }
 
 export function getSession(code: string): Session | null {
-  pruneExpired();
-  return sessions.get(code.toUpperCase()) || null;
+  return readSession(code.toUpperCase());
+}
+
+function saveSession(session: Session) {
+  writeSession(session);
 }
 
 export function joinSession(code: string, playerName: string): { playerId: string } | null {
@@ -91,6 +128,7 @@ export function joinSession(code: string, playerName: string): { playerId: strin
   };
 
   session.players.push(player);
+  saveSession(session);
   return { playerId };
 }
 
@@ -120,6 +158,7 @@ export function submitCharacter(
 
   session.characters.push(charWithAudition);
   player.hasSubmittedCharacter = true;
+  saveSession(session);
   return true;
 }
 
@@ -158,6 +197,7 @@ export function advancePhase(code: string, hostId: string): Session | null {
       return null;
   }
 
+  saveSession(session);
   return session;
 }
 
@@ -196,6 +236,7 @@ export function submitApprovals(
   }
 
   player.hasVoted[taskIndex] = true;
+  saveSession(session);
   return true;
 }
 
@@ -209,6 +250,7 @@ export function setCharacterResponses(
   const char = session.characters.find((c) => c.playerId === playerId);
   if (char) {
     char.responses = responses;
+    saveSession(session);
   }
 }
 
@@ -222,6 +264,7 @@ export function setCharacterScore(
   const char = session.characters.find((c) => c.playerId === playerId);
   if (char) {
     char.coherenceScore = score;
+    saveSession(session);
   }
 }
 
@@ -229,6 +272,7 @@ export function updateAuditionProgress(code: string, completed: number, total: n
   const session = getSession(code);
   if (session) {
     session.auditionProgress = { completed, total };
+    saveSession(session);
   }
 }
 
@@ -236,5 +280,6 @@ export function updateSessionStatus(code: string, status: Session["status"]) {
   const session = getSession(code);
   if (session) {
     session.status = status;
+    saveSession(session);
   }
 }
