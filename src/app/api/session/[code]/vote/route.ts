@@ -8,16 +8,16 @@ export async function POST(
   try {
     const { code } = await params;
     const body = await request.json();
-    const { playerId, taskIndex, approvals } = body;
+    const { playerId, approvals } = body;
 
-    if (!playerId || taskIndex === undefined || !approvals) {
+    if (!playerId || !approvals) {
       return NextResponse.json(
-        { error: "playerId, taskIndex, and approvals are required" },
+        { error: "playerId and approvals are required" },
         { status: 400 }
       );
     }
 
-    const ok = await submitApprovals(code, playerId, taskIndex, approvals);
+    const ok = await submitApprovals(code, playerId, approvals);
     if (!ok) {
       return NextResponse.json({ error: "Vote rejected" }, { status: 400 });
     }

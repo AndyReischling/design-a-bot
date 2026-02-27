@@ -8,9 +8,7 @@ import PlayerList from "@/components/session/PlayerList";
 import PhaseControls from "@/components/session/PhaseControls";
 import SessionProgressBar from "@/components/session/SessionProgressBar";
 import LoadingOrb from "@/components/ui/LoadingOrb";
-import Card from "@/components/ui/Card";
 import VoteCounter from "@/components/voting/VoteCounter";
-import VoteReveal from "@/components/voting/VoteReveal";
 import RobotAvatar from "@/components/ui/RobotAvatar";
 import PixelBot from "@/components/ui/PixelBot";
 import { useSessionPolling } from "@/lib/useSessionPolling";
@@ -37,29 +35,11 @@ export default function HostSessionPage() {
   }, [code, hostId]);
 
   const submittedCount = session?.players.filter((p) => p.hasSubmittedCharacter).length ?? 0;
-  const currentTask = session?.currentTask ?? 0;
-  const currentTaskId = TASK_ORDER[currentTask];
-  const currentMeta = currentTaskId ? TASK_META[currentTaskId] : null;
 
-  const votersForCurrentTask = useMemo(() => {
+  const votersCount = useMemo(() => {
     if (!session) return 0;
-    return session.players.filter((p) => p.hasVoted[currentTask]).length;
-  }, [session, currentTask]);
-
-  const voteResults = useMemo(() => {
-    if (!session || session.status !== "voting") return [];
-    return session.characters.map((c) => {
-      const votesForBot = session.votes.filter(
-        (v) => v.taskIndex === currentTask && v.botLabel === c.botLabel
-      );
-      return {
-        botLabel: c.botLabel,
-        response: c.responses[currentTaskId] || "",
-        yes: votesForBot.filter((v) => v.approval).length,
-        total: votesForBot.length,
-      };
-    });
-  }, [session, currentTask, currentTaskId]);
+    return session.players.filter((p) => p.hasVoted[0]).length;
+  }, [session]);
 
   const canAdvance = useMemo(() => {
     if (!session) return false;
@@ -70,8 +50,6 @@ export default function HostSessionPage() {
         return true;
       case "auditioning":
         return false;
-      case "presenting":
-        return true;
       case "voting":
         return true;
       default:
@@ -218,40 +196,8 @@ export default function HostSessionPage() {
           </motion.div>
         )}
 
-        {/* PRESENTING */}
-        {session.status === "presenting" && currentMeta && (
-          <motion.div
-            className="flex flex-col gap-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            key={`present-${currentTask}`}
-          >
-            <div className="text-center">
-              <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
-                Task {currentMeta.number} — {currentMeta.label}
-              </span>
-              <p className="mx-auto mt-3 max-w-2xl font-sans text-xl leading-relaxed text-bone md:text-2xl">
-                {currentMeta.scenario}
-              </p>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              {session.characters.map((c) => (
-                <Card key={c.botLabel} variant="active">
-                  <span className="font-mono text-xs uppercase tracking-wider text-orchid">
-                    {c.botLabel}
-                  </span>
-                  <p className="mt-2 font-sans text-base leading-relaxed text-bone whitespace-pre-wrap md:text-lg">
-                    {c.responses[currentTaskId] || "..."}
-                  </p>
-                </Card>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
         {/* VOTING */}
-        {session.status === "voting" && currentMeta && (
+        {session.status === "voting" && (
           <motion.div
             className="flex flex-col gap-6"
             initial={{ opacity: 0 }}
@@ -259,22 +205,34 @@ export default function HostSessionPage() {
           >
             <div className="text-center">
               <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
-                Voting — Task {currentMeta.number}
+                Voting
               </span>
               <h2 className="mt-2 font-serif text-2xl font-bold text-bone">
-                {currentMeta.label}
+                Players are reviewing all characters
               </h2>
             </div>
 
             <div className="flex justify-center">
               <VoteCounter
-                votesIn={votersForCurrentTask}
+                votesIn={votersCount}
                 totalVoters={session.players.length}
               />
             </div>
 
-            {voteResults.length > 0 && (
-              <VoteReveal results={voteResults} />
+            {session.characters.some((c) => c.avatarUrl) && (
+              <div className="flex flex-wrap justify-center gap-6">
+                {session.characters
+                  .filter((c) => c.avatarUrl)
+                  .map((c, i) => (
+                    <PixelBot
+                      key={c.playerId}
+                      avatarUrl={c.avatarUrl!}
+                      name={c.name}
+                      size={72}
+                      delay={i * 0.15}
+                    />
+                  ))}
+              </div>
             )}
           </motion.div>
         )}
@@ -307,7 +265,7 @@ export default function HostSessionPage() {
           canAdvance={canAdvance}
           playerCount={session.players.length}
           submittedCount={submittedCount}
-          votesIn={votersForCurrentTask}
+          votesIn={votersCount}
           totalVoters={session.players.length}
         />
       )}

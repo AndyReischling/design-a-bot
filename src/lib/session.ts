@@ -148,22 +148,11 @@ export async function advancePhase(code: string, hostId: string): Promise<Sessio
       session.status = "auditioning";
       break;
     case "auditioning":
-      session.status = "presenting";
-      session.currentTask = 0;
-      break;
-    case "presenting":
       session.status = "voting";
       break;
-    case "voting": {
-      const nextTask = session.currentTask + 1;
-      if (nextTask >= 6) {
-        session.status = "results";
-      } else {
-        session.currentTask = nextTask;
-        session.status = "presenting";
-      }
+    case "voting":
+      session.status = "results";
       break;
-    }
     default:
       return null;
   }
@@ -182,31 +171,29 @@ function assignBotLabels(session: Session) {
 export async function submitApprovals(
   code: string,
   playerId: string,
-  taskIndex: number,
   approvals: Record<string, boolean>
 ): Promise<boolean> {
   const session = await getSession(code);
   if (!session) return false;
   if (session.status !== "voting") return false;
-  if (taskIndex !== session.currentTask) return false;
 
   const player = session.players.find((p) => p.id === playerId);
   if (!player) return false;
-  if (player.hasVoted[taskIndex]) return false;
+  if (player.hasVoted[0]) return false;
 
-  for (const [botLabel, approval] of Object.entries(approvals)) {
+  for (const [characterName, approval] of Object.entries(approvals)) {
     const isSelf = session.characters.find(
-      (c) => c.playerId === playerId && c.botLabel === botLabel
+      (c) => c.playerId === playerId && c.name === characterName
     );
     if (isSelf && !session.settings.allowSelfVote) continue;
 
-    const validLabel = session.characters.some((c) => c.botLabel === botLabel);
-    if (!validLabel) continue;
+    const valid = session.characters.some((c) => c.name === characterName);
+    if (!valid) continue;
 
-    session.votes.push({ playerId, taskIndex, botLabel, approval });
+    session.votes.push({ playerId, characterName, approval });
   }
 
-  player.hasVoted[taskIndex] = true;
+  player.hasVoted[0] = true;
   await writeSession(session);
   return true;
 }

@@ -22,10 +22,8 @@ function getButtonLabel(status: SessionStatus): string {
       return "Close Submissions & Begin Auditions";
     case "auditioning":
       return "Auditions in progress...";
-    case "presenting":
-      return "Open Voting";
     case "voting":
-      return "Close Voting & Reveal";
+      return "Close Voting & Show Results";
     case "results":
       return "View Full Results";
     default:

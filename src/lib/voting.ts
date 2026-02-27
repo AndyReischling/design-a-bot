@@ -3,26 +3,16 @@ import { detectAwards } from "./awards";
 
 export function computeAudienceScores(session: Session): void {
   for (const char of session.characters) {
-    const yesPerTask: number[] = [];
-    const totalPerTask: number[] = [];
-
-    for (let t = 0; t < 6; t++) {
-      const votesForBot = session.votes.filter(
-        (v) => v.taskIndex === t && v.botLabel === char.botLabel
-      );
-      totalPerTask.push(votesForBot.length);
-      yesPerTask.push(votesForBot.filter((v) => v.approval).length);
-    }
-
-    const yesVotes = yesPerTask.reduce((a, b) => a + b, 0);
-    const totalVotes = totalPerTask.reduce((a, b) => a + b, 0);
+    const votesForChar = session.votes.filter(
+      (v) => v.characterName === char.name
+    );
+    const yesVotes = votesForChar.filter((v) => v.approval).length;
+    const totalVotes = votesForChar.length;
     const pct = totalVotes > 0 ? Math.round((yesVotes / totalVotes) * 100) : 0;
 
     char.audienceScore = {
       yesVotes,
       totalVotes,
-      yesPerTask,
-      totalPerTask,
       points: pct,
     };
   }
@@ -53,30 +43,13 @@ export function computeRankings(session: Session): FinalRanking[] {
 
   const awards = detectAwards(session, rankings);
   for (const award of awards) {
-    const r = rankings.find((rk) => rk.botLabel === award.botLabel);
+    const r = rankings.find((rk) => rk.characterName === award.characterName);
     if (r) r.awards.push(award.award);
   }
 
   return rankings;
 }
 
-export function getApprovalCountsForTask(
-  session: Session,
-  taskIndex: number
-): Record<string, { yes: number; total: number }> {
-  const counts: Record<string, { yes: number; total: number }> = {};
-  for (const char of session.characters) {
-    counts[char.botLabel] = { yes: 0, total: 0 };
-  }
-  for (const vote of session.votes) {
-    if (vote.taskIndex === taskIndex && counts[vote.botLabel]) {
-      counts[vote.botLabel].total++;
-      if (vote.approval) counts[vote.botLabel].yes++;
-    }
-  }
-  return counts;
-}
-
-export function getVotesSubmittedForTask(session: Session, taskIndex: number): number {
-  return session.players.filter((p) => p.hasVoted[taskIndex]).length;
+export function getVotersCount(session: Session): number {
+  return session.players.filter((p) => p.hasVoted[0]).length;
 }

@@ -102,7 +102,7 @@ async function runAllAuditions(code: string) {
     await updateAuditionProgress(code, completed, totalTasks);
   }
 
-  await updateSessionStatus(code, "presenting");
+  await updateSessionStatus(code, "voting");
 }
 
 export async function POST(

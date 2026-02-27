@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
 import CharacterForm from "@/components/character/CharacterForm";
 import { computeProgress } from "@/components/character/CharacterCard";
 import ArchiveDrawer from "@/components/character/ArchiveDrawer";
@@ -16,7 +15,7 @@ import PersonalResult from "@/components/results/PersonalResult";
 import LoadingOrb from "@/components/ui/LoadingOrb";
 import RobotAvatar from "@/components/ui/RobotAvatar";
 import { useSessionPolling } from "@/lib/useSessionPolling";
-import { TASK_ORDER, TASK_META, type CharacterSheet, type FinalRanking, type CharacterWithAudition } from "@/lib/types";
+import { type CharacterSheet, type FinalRanking, type CharacterWithAudition } from "@/lib/types";
 
 export default function PlayerPage() {
   const params = useParams();
@@ -121,25 +120,21 @@ export default function PlayerPage() {
   const handleVote = useCallback(
     async (approvals: Record<string, boolean>) => {
       if (!playerId || !session) return;
-      const taskIndex = session.currentTask;
       try {
         const res = await fetch(`/api/session/${code}/vote`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ playerId, taskIndex, approvals }),
+          body: JSON.stringify({ playerId, approvals }),
         });
         const data = await res.json();
         if (data.success) {
-          setVotedTasks((prev) => new Set([...prev, taskIndex]));
+          setVotedTasks((prev) => new Set([...prev, 0]));
         }
       } catch { /* ignore */ }
     },
     [code, playerId, session]
   );
 
-  const currentTask = session?.currentTask ?? 0;
-  const currentTaskId = TASK_ORDER[currentTask];
-  const currentMeta = currentTaskId ? TASK_META[currentTaskId] : null;
   const progress = computeProgress(character);
   const canSubmit = progress >= 100 && !submitted;
 
@@ -148,17 +143,8 @@ export default function PlayerPage() {
   }, [session, playerId]);
 
   const myRanking = useMemo(() => {
-    return rankings?.find((r) => r.botLabel === myCharacter?.botLabel);
+    return rankings?.find((r) => r.characterName === myCharacter?.name);
   }, [rankings, myCharacter]);
-
-  const votingResponses = useMemo(() => {
-    if (!session || !currentTaskId) return [];
-    return session.characters.map((c) => ({
-      botLabel: c.botLabel,
-      response: c.responses[currentTaskId] || "",
-      isSelf: c.playerId === playerId,
-    }));
-  }, [session, currentTaskId, playerId]);
 
   // Not joined yet
   if (!playerId) {
@@ -307,45 +293,10 @@ export default function PlayerPage() {
             </motion.div>
           )}
 
-          {/* PRESENTING */}
-          {session.status === "presenting" && currentMeta && (
-            <motion.div
-              key={`presenting-${currentTask}`}
-              className="flex flex-col gap-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <div>
-                <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
-                  Task {currentMeta.number} — {currentMeta.label}
-                </span>
-                <p className="mt-2 font-sans text-sm text-bone">
-                  {currentMeta.scenario}
-                </p>
-              </div>
-              <div className="flex flex-col gap-3">
-                {session.characters.map((c) => (
-                  <Card key={c.botLabel} variant="active" className="text-sm">
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-orchid">
-                      {c.botLabel}
-                    </span>
-                    <p className="mt-1 font-sans text-sm leading-relaxed text-bone whitespace-pre-wrap">
-                      {c.responses[currentTaskId] || "..."}
-                    </p>
-                  </Card>
-                ))}
-              </div>
-              <p className="text-center font-sans text-xs text-bone">
-                Waiting for host to open voting...
-              </p>
-            </motion.div>
-          )}
-
           {/* VOTING */}
-          {session.status === "voting" && currentMeta && (
+          {session.status === "voting" && (
             <motion.div
-              key={`voting-${currentTask}`}
+              key="voting"
               className="flex flex-col gap-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -353,17 +304,18 @@ export default function PlayerPage() {
             >
               <div>
                 <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
-                  Vote — Task {currentMeta.number}
+                  Voting
                 </span>
                 <h2 className="mt-1 font-serif text-lg font-bold text-bone">
-                  {currentMeta.label}
+                  Review all characters and vote
                 </h2>
               </div>
               <VotingInterface
-                responses={votingResponses}
+                characters={session.characters}
+                selfPlayerId={playerId || undefined}
                 allowSelfVote={session.settings.allowSelfVote}
                 onVote={handleVote}
-                hasVoted={votedTasks.has(currentTask)}
+                hasVoted={votedTasks.has(0)}
               />
             </motion.div>
           )}

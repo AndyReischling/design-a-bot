@@ -45,7 +45,7 @@ export const TASK_ORDER: TaskType[] = [
 
 // --- Multiplayer Session Types ---
 
-export type SessionStatus = 'lobby' | 'creating' | 'auditioning' | 'presenting' | 'voting' | 'results';
+export type SessionStatus = 'lobby' | 'creating' | 'auditioning' | 'voting' | 'results';
 
 export interface SessionSettings {
   maxPlayers: number;
@@ -74,16 +74,13 @@ export interface CharacterWithAudition extends CharacterSheet {
 
 export interface Vote {
   playerId: string;
-  taskIndex: number;
-  botLabel: string;
+  characterName: string;
   approval: boolean;
 }
 
 export interface AudienceScore {
   yesVotes: number;
   totalVotes: number;
-  yesPerTask: number[];
-  totalPerTask: number[];
   points: number;
 }
 
