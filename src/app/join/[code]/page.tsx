@@ -217,7 +217,7 @@ export default function PlayerPage() {
             </span>
             <p className="font-sans text-xs text-ash">{playerName} / {code}</p>
           </div>
-          <RobotAvatar size={32} animate={false} />
+          <RobotAvatar size={32} interactive={false} />
         </div>
 
         {/* LOBBY - waiting */}
