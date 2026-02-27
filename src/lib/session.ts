@@ -254,3 +254,17 @@ export async function updateSessionStatus(code: string, status: Session["status"
     await writeSession(session);
   }
 }
+
+export async function setCharacterAvatar(
+  code: string,
+  playerId: string,
+  avatarUrl: string
+): Promise<void> {
+  const session = await getSession(code);
+  if (!session) return;
+  const char = session.characters.find((c) => c.playerId === playerId);
+  if (char) {
+    char.avatarUrl = avatarUrl;
+    await writeSession(session);
+  }
+}

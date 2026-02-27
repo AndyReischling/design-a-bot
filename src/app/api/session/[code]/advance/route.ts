@@ -20,7 +20,7 @@ async function generateResponse(character: CharacterSheet, task: TaskType): Prom
   const completion = await openai.chat.completions.create({
     model: "gpt-4o",
     max_tokens: 4096,
-    temperature: 0.9,
+    temperature: 1.2,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: taskPrompt },

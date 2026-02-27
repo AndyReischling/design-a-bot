@@ -1,5 +1,39 @@
 import { NextResponse } from "next/server";
-import { submitCharacter } from "@/lib/session";
+import { submitCharacter, setCharacterAvatar } from "@/lib/session";
+import type { CharacterSheet } from "@/lib/types";
+
+async function generateAvatar(code: string, playerId: string, character: CharacterSheet) {
+  try {
+    const { default: OpenAI } = await import("openai");
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) return;
+    const openai = new OpenAI({ apiKey: key });
+
+    const mood = character.desire && character.fear
+      ? `Their deepest desire is "${character.desire}" and their deepest fear is "${character.fear}".`
+      : "";
+    const voice = character.voiceSoundsLike
+      ? `Their personality sounds like: ${character.voiceSoundsLike}.`
+      : "";
+
+    const prompt = `A single pixelated robot character on a plain white background. 8-bit retro pixel art style, like a character from a classic arcade game. The robot should visually express this personality: ${character.name}. ${character.backstory || ""} ${mood} ${voice} The robot's shape, color palette, expression, and accessories should all reflect who they are. Simple, iconic, memorable. No text. No background elements. Just the robot, centered, on white.`;
+
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      prompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "standard",
+    });
+
+    const url = response.data?.[0]?.url;
+    if (url) {
+      await setCharacterAvatar(code, playerId, url);
+    }
+  } catch (err) {
+    console.error("Avatar generation failed:", err);
+  }
+}
 
 export async function POST(
   request: Request,
@@ -21,6 +55,8 @@ export async function POST(
         { status: 400 }
       );
     }
+
+    generateAvatar(code, playerId, character as CharacterSheet).catch(() => {});
 
     return NextResponse.json({ success: true });
   } catch (error) {

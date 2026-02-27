@@ -69,6 +69,7 @@ export interface CharacterWithAudition extends CharacterSheet {
   responses: Record<TaskType, string>;
   coherenceScore?: CoherenceScore;
   audienceScore?: AudienceScore;
+  avatarUrl?: string;
 }
 
 export interface Vote {

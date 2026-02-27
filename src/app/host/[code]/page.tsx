@@ -12,6 +12,7 @@ import Card from "@/components/ui/Card";
 import VoteCounter from "@/components/voting/VoteCounter";
 import VoteReveal from "@/components/voting/VoteReveal";
 import RobotAvatar from "@/components/ui/RobotAvatar";
+import PixelBot from "@/components/ui/PixelBot";
 import { useSessionPolling } from "@/lib/useSessionPolling";
 import { TASK_ORDER, TASK_META } from "@/lib/types";
 
@@ -136,6 +137,27 @@ export default function HostSessionPage() {
               </p>
             </div>
             <PlayerList players={session.players} showStatus />
+
+            {session.characters.some((c) => c.avatarUrl) && (
+              <div className="mt-6">
+                <p className="mb-4 text-center font-mono text-xs uppercase tracking-widest text-bone">
+                  The Contestants
+                </p>
+                <div className="flex flex-wrap justify-center gap-6">
+                  {session.characters
+                    .filter((c) => c.avatarUrl)
+                    .map((c, i) => (
+                      <PixelBot
+                        key={c.playerId}
+                        avatarUrl={c.avatarUrl!}
+                        name={c.name}
+                        size={96}
+                        delay={i * 0.2}
+                      />
+                    ))}
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -146,6 +168,21 @@ export default function HostSessionPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
+            {session.characters.some((c) => c.avatarUrl) && (
+              <div className="flex flex-wrap justify-center gap-6">
+                {session.characters
+                  .filter((c) => c.avatarUrl)
+                  .map((c, i) => (
+                    <PixelBot
+                      key={c.playerId}
+                      avatarUrl={c.avatarUrl!}
+                      name={c.name}
+                      size={80}
+                      delay={i * 0.15}
+                    />
+                  ))}
+              </div>
+            )}
             <LoadingOrb size={64} />
             <div className="text-center">
               <h1 className="font-serif text-3xl font-bold text-bone md:text-4xl">

@@ -34,6 +34,7 @@ export async function POST(request: Request) {
       const completion = await openai.chat.completions.create({
         model: MODEL,
         max_tokens: 4096,
+        temperature: 1.2,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: taskPrompt },
