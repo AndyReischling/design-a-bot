@@ -9,6 +9,7 @@ import PhaseControls from "@/components/session/PhaseControls";
 import SessionProgressBar from "@/components/session/SessionProgressBar";
 import LoadingOrb from "@/components/ui/LoadingOrb";
 import VoteCounter from "@/components/voting/VoteCounter";
+import CharacterAccordion from "@/components/voting/CharacterAccordion";
 import RobotAvatar from "@/components/ui/RobotAvatar";
 import PixelBot from "@/components/ui/PixelBot";
 import { useSessionPolling } from "@/lib/useSessionPolling";
@@ -219,21 +220,7 @@ export default function HostSessionPage() {
               />
             </div>
 
-            {session.characters.some((c) => c.avatarUrl) && (
-              <div className="flex flex-wrap justify-center gap-6">
-                {session.characters
-                  .filter((c) => c.avatarUrl)
-                  .map((c, i) => (
-                    <PixelBot
-                      key={c.playerId}
-                      avatarUrl={c.avatarUrl!}
-                      name={c.name}
-                      size={72}
-                      delay={i * 0.15}
-                    />
-                  ))}
-              </div>
-            )}
+            <CharacterAccordion characters={session.characters} />
           </motion.div>
         )}
 
