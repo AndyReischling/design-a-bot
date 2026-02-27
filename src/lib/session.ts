@@ -1,5 +1,14 @@
-import { kv } from "@vercel/kv";
+import { createClient } from "@vercel/kv";
 import type { Session, SessionSettings, Player, CharacterSheet, CharacterWithAudition, TaskType } from "./types";
+
+function getKV() {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) {
+    throw new Error(`Missing KV env vars. KV_REST_API_URL=${url ? "set" : "MISSING"}, KV_REST_API_TOKEN=${token ? "set" : "MISSING"}`);
+  }
+  return createClient({ url, token });
+}
 
 const SESSION_TTL_S = 2 * 60 * 60; // 2 hours
 const SAFE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -10,12 +19,12 @@ function sessionKey(code: string): string {
 }
 
 async function readSession(code: string): Promise<Session | null> {
-  const data = await kv.get<Session>(sessionKey(code));
+  const data = await getKV().get<Session>(sessionKey(code));
   return data ?? null;
 }
 
 async function writeSession(session: Session): Promise<void> {
-  await kv.set(sessionKey(session.code), session, { ex: SESSION_TTL_S });
+  await getKV().set(sessionKey(session.code), session, { ex: SESSION_TTL_S });
 }
 
 async function generateCode(): Promise<string> {
@@ -25,7 +34,7 @@ async function generateCode(): Promise<string> {
     code = Array.from({ length: 4 }, () =>
       SAFE_CHARS[Math.floor(Math.random() * SAFE_CHARS.length)]
     ).join("");
-    const exists = await kv.exists(sessionKey(code));
+    const exists = await getKV().exists(sessionKey(code));
     if (!exists) break;
     attempts++;
   } while (attempts < 20);
