@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback, useId } from "react";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion, useMotionValue, useTransform, useSpring, useAnimation } from "framer-motion";
 
 interface RobotAvatarProps {
   size?: number;
@@ -16,6 +16,7 @@ export default function RobotAvatar({
 }: RobotAvatarProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [blinkState, setBlinkState] = useState(false);
+  const spinControls = useAnimation();
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -65,17 +66,29 @@ export default function RobotAvatar({
 
   const uid = `rob-${useId().replace(/:/g, "")}`;
 
+  const handleHover = useCallback(() => {
+    spinControls.start({
+      rotateX: [0, 15, -5, 10, 0],
+      transition: { duration: 0.8, ease: "easeInOut" },
+    });
+  }, [spinControls]);
+
   return (
     <motion.div
       ref={containerRef}
-      className={`inline-flex items-center justify-center ${className}`}
-      animate={interactive ? { y: [0, -4, 0] } : {}}
-      transition={
-        interactive
-          ? { duration: 3, repeat: Infinity, ease: "easeInOut" as const }
-          : {}
-      }
+      className={`inline-flex cursor-pointer items-center justify-center ${className}`}
+      animate={spinControls}
+      onMouseEnter={handleHover}
+      style={{ transformOrigin: "center bottom" }}
     >
+      <motion.div
+        animate={interactive ? { y: [0, -4, 0] } : {}}
+        transition={
+          interactive
+            ? { duration: 3, repeat: Infinity, ease: "easeInOut" as const }
+            : {}
+        }
+      >
       <svg
         width={size}
         height={size * 1.25}
@@ -271,6 +284,7 @@ export default function RobotAvatar({
           </g>
         </motion.g>
       </svg>
+      </motion.div>
     </motion.div>
   );
 }

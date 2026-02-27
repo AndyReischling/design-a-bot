@@ -51,7 +51,7 @@ export default function LandingPage() {
         >
           <VersaceCigarette size={40} accent="amber" className="hidden sm:block" />
           <h1 className="font-serif text-6xl font-bold tracking-tight text-bone sm:text-7xl md:text-8xl">
-            THE AUDITION
+            BOT IDOL
           </h1>
           <VersaceCigarette size={40} accent="orchid" className="hidden sm:block" />
         </motion.div>
@@ -61,7 +61,7 @@ export default function LandingPage() {
           variants={fadeUp}
           className="max-w-md font-sans text-lg text-bone sm:text-xl"
         >
-          Design a character. Give them a job. See if they hold together.
+          Who will be America's next top bank app agent?
         </motion.p>
 
         {/* Rules card */}
@@ -71,12 +71,10 @@ export default function LandingPage() {
             className="max-w-lg border-bone/10 bg-surface/80 backdrop-blur-sm"
           >
             <p className="font-sans text-sm leading-relaxed text-bone">
-              You&rsquo;ll build a fictional character from scratch — their voice,
-              their fears, their signature moves. Then they&rsquo;ll be hired as a
-              customer service agent at a bank app and face six escalating
-              scenarios. The question isn&rsquo;t whether they can do the job. It&rsquo;s
-              whether they can be <em className="text-teal">themselves</em> while
-              doing it.
+              Many bots will enter the ring, few will leave unscathed. Do you think you have what it takes to design America&rsquo;s next Bot Idol? Can you keep their character together while they are put through the Six Trials of Doom? Who will America fall in love with, imperfections and all?
+            </p>
+            <p className="mt-4 font-sans text-sm leading-relaxed text-bone">
+              There&rsquo;s only one way to find out. Enter the arena. Embrace the spirit of competition. Pound your chest and yell into a cliff. Punch a hole in the wall. Turn it up to 11. Become immortal and then die.
             </p>
           </Card>
         </motion.div>
