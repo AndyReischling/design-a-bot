@@ -1,6 +1,10 @@
 import type { Session, SessionSettings, Player, CharacterSheet, CharacterWithAudition, Vote, TaskType } from "./types";
 
-const sessions = new Map<string, Session>();
+const globalStore = globalThis as unknown as { __sessions?: Map<string, Session> };
+if (!globalStore.__sessions) {
+  globalStore.__sessions = new Map<string, Session>();
+}
+const sessions = globalStore.__sessions;
 
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
 
