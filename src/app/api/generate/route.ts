@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 import { buildSystemPrompt, buildTaskPrompt, buildScoringPrompt } from "@/lib/prompts";
 import { parseScoreResponse } from "@/lib/scoring";
 import type { CharacterSheet, TaskType } from "@/lib/types";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+async function getOpenAI() {
+  const { default: OpenAI } = await import("openai");
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) throw new Error("Missing OPENAI_API_KEY. Set it in Vercel Environment Variables.");
+  return new OpenAI({ apiKey: key });
+}
 
 const MODEL = "gpt-4o";
 
@@ -28,6 +30,7 @@ export async function POST(request: Request) {
       const systemPrompt = buildSystemPrompt(character as CharacterSheet);
       const taskPrompt = buildTaskPrompt(character as CharacterSheet, task as TaskType);
 
+      const openai = await getOpenAI();
       const completion = await openai.chat.completions.create({
         model: MODEL,
         max_tokens: 4096,
@@ -55,6 +58,7 @@ export async function POST(request: Request) {
         responses
       );
 
+      const openai = await getOpenAI();
       const completion = await openai.chat.completions.create({
         model: MODEL,
         max_tokens: 2048,

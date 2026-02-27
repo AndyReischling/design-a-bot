@@ -2,16 +2,21 @@ import { NextResponse } from "next/server";
 import { advancePhase, getSession, setCharacterResponses, setCharacterScore, updateAuditionProgress, updateSessionStatus } from "@/lib/session";
 import { buildSystemPrompt, buildTaskPrompt, buildScoringPrompt } from "@/lib/prompts";
 import { parseScoreResponse } from "@/lib/scoring";
-import OpenAI from "openai";
 import type { CharacterSheet, CharacterWithAudition, TaskType } from "@/lib/types";
 import { TASK_ORDER } from "@/lib/types";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+async function getOpenAI() {
+  const { default: OpenAI } = await import("openai");
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) throw new Error("Missing OPENAI_API_KEY. Set it in Vercel Environment Variables.");
+  return new OpenAI({ apiKey: key });
+}
 
 async function generateResponse(character: CharacterSheet, task: TaskType): Promise<string> {
   const systemPrompt = buildSystemPrompt(character);
   const taskPrompt = buildTaskPrompt(character, task);
 
+  const openai = await getOpenAI();
   const completion = await openai.chat.completions.create({
     model: "gpt-4o",
     max_tokens: 4096,
@@ -31,6 +36,7 @@ async function scoreCoherence(character: CharacterWithAudition) {
     character.responses as Record<TaskType, string>
   );
 
+  const openai = await getOpenAI();
   const completion = await openai.chat.completions.create({
     model: "gpt-4o",
     max_tokens: 2048,
