@@ -20,7 +20,7 @@ const fadeUp = {
 
 export default function LandingPage() {
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pb-16">
       <Particles count={24} />
 
       {/* Ambient background gradients */}
@@ -82,7 +82,7 @@ export default function LandingPage() {
         </motion.div>
 
         {/* CTA */}
-        <motion.div variants={fadeUp} className="flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+        <motion.div variants={fadeUp} className="flex flex-col items-center gap-3 pb-12 sm:flex-row sm:gap-4">
           <Link href="/create">
             <Button variant="primary" className="px-8 py-4 text-base">
               Solo Audition

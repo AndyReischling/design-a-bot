@@ -317,7 +317,7 @@ export default function PlayerPage() {
               exit={{ opacity: 0 }}
             >
               <div>
-                <span className="font-mono text-xs uppercase tracking-widest text-orchid">
+                <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
                   Task {currentMeta.number} — {currentMeta.label}
                 </span>
                 <p className="mt-2 font-sans text-sm text-bone">
@@ -352,7 +352,7 @@ export default function PlayerPage() {
               exit={{ opacity: 0 }}
             >
               <div>
-                <span className="font-mono text-xs uppercase tracking-widest text-orchid">
+                <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
                   Vote — Task {currentMeta.number}
                 </span>
                 <h2 className="mt-1 font-serif text-lg font-bold text-bone">

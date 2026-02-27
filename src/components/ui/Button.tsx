@@ -15,13 +15,13 @@ interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-amber text-white font-semibold hover:brightness-90 active:brightness-85 shadow-[0_0_20px_rgba(245,213,71,0.25)]",
+    "bg-amber text-bone font-semibold hover:brightness-90 active:brightness-85 shadow-[0_0_20px_rgba(245,213,71,0.25)]",
   secondary:
-    "bg-transparent border-2 border-teal text-teal hover:bg-teal hover:text-white hover:border-teal",
+    "bg-teal/10 border-2 border-teal text-bone hover:bg-teal/20 hover:border-teal",
   accent:
-    "bg-orchid text-white font-semibold hover:brightness-90 active:brightness-85",
+    "bg-orchid text-bone font-semibold hover:brightness-90 active:brightness-85",
   ghost:
-    "bg-transparent text-bone hover:bg-bone/10",
+    "bg-teal/10 border-2 border-teal/50 text-bone hover:bg-teal/20 hover:border-teal",
 };
 
 export default function Button({

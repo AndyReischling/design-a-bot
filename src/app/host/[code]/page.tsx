@@ -121,7 +121,7 @@ export default function HostSessionPage() {
             animate={{ opacity: 1 }}
           >
             <div className="text-center">
-              <span className="font-mono text-xs uppercase tracking-widest text-orchid">
+              <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
                 Character Creation
               </span>
               <h1 className="mt-2 font-serif text-3xl font-bold text-bone md:text-4xl">
@@ -186,7 +186,7 @@ export default function HostSessionPage() {
             key={`present-${currentTask}`}
           >
             <div className="text-center">
-              <span className="font-mono text-xs uppercase tracking-widest text-orchid">
+              <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
                 Task {currentMeta.number} — {currentMeta.label}
               </span>
               <p className="mx-auto mt-3 max-w-2xl font-sans text-xl leading-relaxed text-bone md:text-2xl">
@@ -217,7 +217,7 @@ export default function HostSessionPage() {
             animate={{ opacity: 1 }}
           >
             <div className="text-center">
-              <span className="font-mono text-xs uppercase tracking-widest text-orchid">
+              <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
                 Voting — Task {currentMeta.number}
               </span>
               <h2 className="mt-2 font-serif text-2xl font-bold text-bone">

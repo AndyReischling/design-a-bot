@@ -41,7 +41,7 @@ export default function HostCreatePage() {
         <RobotAvatar size={100} />
 
         <div>
-          <span className="font-mono text-xs uppercase tracking-widest text-orchid">
+          <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
             Multiplayer
           </span>
           <h1 className="mt-2 font-serif text-4xl font-bold text-bone">

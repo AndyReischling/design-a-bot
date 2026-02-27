@@ -32,7 +32,7 @@ export default function ArchivePage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="font-mono text-xs uppercase tracking-widest text-orchid">
+          <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
             Character Archive
           </span>
           <h1 className="mt-2 font-serif text-4xl font-bold text-bone">

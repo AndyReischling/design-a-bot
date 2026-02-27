@@ -74,7 +74,7 @@ export default function CreatePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <span className="font-mono text-xs uppercase tracking-widest text-orchid">
+          <span className="font-mono text-xs font-semibold uppercase tracking-widest text-bone">
             Character Creation
           </span>
           <h1 className="mt-2 font-serif text-4xl font-bold text-bone">
