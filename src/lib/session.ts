@@ -1,72 +1,39 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync, statSync } from "fs";
-import { join } from "path";
-import type { Session, SessionSettings, Player, CharacterSheet, CharacterWithAudition, Vote, TaskType } from "./types";
+import { kv } from "@vercel/kv";
+import type { Session, SessionSettings, Player, CharacterSheet, CharacterWithAudition, TaskType } from "./types";
 
-const SESSION_DIR = join("/tmp", "bot-idol-sessions");
-const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
+const SESSION_TTL_S = 2 * 60 * 60; // 2 hours
 const SAFE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const BOT_LABELS = "ABCDEFGHIJKLMNOPQRST".split("").map((c) => `Bot ${c}`);
 
-function ensureDir() {
-  if (!existsSync(SESSION_DIR)) {
-    mkdirSync(SESSION_DIR, { recursive: true });
-  }
+function sessionKey(code: string): string {
+  return `session:${code.toUpperCase()}`;
 }
 
-function sessionPath(code: string): string {
-  return join(SESSION_DIR, `${code.toUpperCase()}.json`);
+async function readSession(code: string): Promise<Session | null> {
+  const data = await kv.get<Session>(sessionKey(code));
+  return data ?? null;
 }
 
-function readSession(code: string): Session | null {
-  const p = sessionPath(code);
-  if (!existsSync(p)) return null;
-  try {
-    const raw = readFileSync(p, "utf-8");
-    return JSON.parse(raw) as Session;
-  } catch {
-    return null;
-  }
+async function writeSession(session: Session): Promise<void> {
+  await kv.set(sessionKey(session.code), session, { ex: SESSION_TTL_S });
 }
 
-function writeSession(session: Session): void {
-  ensureDir();
-  writeFileSync(sessionPath(session.code), JSON.stringify(session), "utf-8");
-}
-
-function generateCode(): string {
-  ensureDir();
-  const existing = new Set(
-    readdirSync(SESSION_DIR)
-      .filter((f) => f.endsWith(".json"))
-      .map((f) => f.replace(".json", ""))
-  );
+async function generateCode(): Promise<string> {
   let code: string;
+  let attempts = 0;
   do {
     code = Array.from({ length: 4 }, () =>
       SAFE_CHARS[Math.floor(Math.random() * SAFE_CHARS.length)]
     ).join("");
-  } while (existing.has(code));
+    const exists = await kv.exists(sessionKey(code));
+    if (!exists) break;
+    attempts++;
+  } while (attempts < 20);
   return code;
 }
 
 function generateId(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
-}
-
-function pruneExpired() {
-  ensureDir();
-  const now = Date.now();
-  try {
-    for (const file of readdirSync(SESSION_DIR)) {
-      const p = join(SESSION_DIR, file);
-      try {
-        const stat = statSync(p);
-        if (now - stat.mtimeMs > SESSION_TTL_MS) {
-          unlinkSync(p);
-        }
-      } catch { /* ignore */ }
-    }
-  } catch { /* ignore */ }
 }
 
 function shuffleArray<T>(arr: T[]): T[] {
@@ -78,9 +45,8 @@ function shuffleArray<T>(arr: T[]): T[] {
   return a;
 }
 
-export function createSession(settings?: Partial<SessionSettings>): { code: string; hostId: string } {
-  pruneExpired();
-  const code = generateCode();
+export async function createSession(settings?: Partial<SessionSettings>): Promise<{ code: string; hostId: string }> {
+  const code = await generateCode();
   const hostId = generateId();
 
   const session: Session = {
@@ -100,20 +66,16 @@ export function createSession(settings?: Partial<SessionSettings>): { code: stri
     },
   };
 
-  writeSession(session);
+  await writeSession(session);
   return { code, hostId };
 }
 
-export function getSession(code: string): Session | null {
+export async function getSession(code: string): Promise<Session | null> {
   return readSession(code.toUpperCase());
 }
 
-function saveSession(session: Session) {
-  writeSession(session);
-}
-
-export function joinSession(code: string, playerName: string): { playerId: string } | null {
-  const session = getSession(code);
+export async function joinSession(code: string, playerName: string): Promise<{ playerId: string } | null> {
+  const session = await getSession(code);
   if (!session) return null;
   if (session.status !== "lobby") return null;
   if (session.players.length >= session.settings.maxPlayers) return null;
@@ -128,16 +90,16 @@ export function joinSession(code: string, playerName: string): { playerId: strin
   };
 
   session.players.push(player);
-  saveSession(session);
+  await writeSession(session);
   return { playerId };
 }
 
-export function submitCharacter(
+export async function submitCharacter(
   code: string,
   playerId: string,
   character: Omit<CharacterSheet, "id">
-): boolean {
-  const session = getSession(code);
+): Promise<boolean> {
+  const session = await getSession(code);
   if (!session) return false;
   if (session.status !== "creating") return false;
 
@@ -158,12 +120,12 @@ export function submitCharacter(
 
   session.characters.push(charWithAudition);
   player.hasSubmittedCharacter = true;
-  saveSession(session);
+  await writeSession(session);
   return true;
 }
 
-export function advancePhase(code: string, hostId: string): Session | null {
-  const session = getSession(code);
+export async function advancePhase(code: string, hostId: string): Promise<Session | null> {
+  const session = await getSession(code);
   if (!session) return null;
   if (session.hostId !== hostId) return null;
 
@@ -197,7 +159,7 @@ export function advancePhase(code: string, hostId: string): Session | null {
       return null;
   }
 
-  saveSession(session);
+  await writeSession(session);
   return session;
 }
 
@@ -208,13 +170,13 @@ function assignBotLabels(session: Session) {
   });
 }
 
-export function submitApprovals(
+export async function submitApprovals(
   code: string,
   playerId: string,
   taskIndex: number,
   approvals: Record<string, boolean>
-): boolean {
-  const session = getSession(code);
+): Promise<boolean> {
+  const session = await getSession(code);
   if (!session) return false;
   if (session.status !== "voting") return false;
   if (taskIndex !== session.currentTask) return false;
@@ -236,50 +198,50 @@ export function submitApprovals(
   }
 
   player.hasVoted[taskIndex] = true;
-  saveSession(session);
+  await writeSession(session);
   return true;
 }
 
-export function setCharacterResponses(
+export async function setCharacterResponses(
   code: string,
   playerId: string,
   responses: Record<TaskType, string>
-) {
-  const session = getSession(code);
+): Promise<void> {
+  const session = await getSession(code);
   if (!session) return;
   const char = session.characters.find((c) => c.playerId === playerId);
   if (char) {
     char.responses = responses;
-    saveSession(session);
+    await writeSession(session);
   }
 }
 
-export function setCharacterScore(
+export async function setCharacterScore(
   code: string,
   playerId: string,
   score: import("./types").CoherenceScore
-) {
-  const session = getSession(code);
+): Promise<void> {
+  const session = await getSession(code);
   if (!session) return;
   const char = session.characters.find((c) => c.playerId === playerId);
   if (char) {
     char.coherenceScore = score;
-    saveSession(session);
+    await writeSession(session);
   }
 }
 
-export function updateAuditionProgress(code: string, completed: number, total: number) {
-  const session = getSession(code);
+export async function updateAuditionProgress(code: string, completed: number, total: number): Promise<void> {
+  const session = await getSession(code);
   if (session) {
     session.auditionProgress = { completed, total };
-    saveSession(session);
+    await writeSession(session);
   }
 }
 
-export function updateSessionStatus(code: string, status: Session["status"]) {
-  const session = getSession(code);
+export async function updateSessionStatus(code: string, status: Session["status"]): Promise<void> {
+  const session = await getSession(code);
   if (session) {
     session.status = status;
-    saveSession(session);
+    await writeSession(session);
   }
 }

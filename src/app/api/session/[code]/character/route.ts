@@ -14,7 +14,7 @@ export async function POST(
       return NextResponse.json({ error: "playerId and character are required" }, { status: 400 });
     }
 
-    const ok = submitCharacter(code, playerId, character);
+    const ok = await submitCharacter(code, playerId, character);
     if (!ok) {
       return NextResponse.json(
         { error: "Cannot submit character. Check session status and whether you already submitted." },

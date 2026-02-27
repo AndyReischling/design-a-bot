@@ -17,7 +17,7 @@ export async function POST(
       );
     }
 
-    const ok = submitApprovals(code, playerId, taskIndex, approvals);
+    const ok = await submitApprovals(code, playerId, taskIndex, approvals);
     if (!ok) {
       return NextResponse.json({ error: "Vote rejected" }, { status: 400 });
     }

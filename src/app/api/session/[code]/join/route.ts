@@ -14,7 +14,7 @@ export async function POST(
       return NextResponse.json({ error: "Player name is required" }, { status: 400 });
     }
 
-    const result = joinSession(code, name.trim());
+    const result = await joinSession(code, name.trim());
     if (!result) {
       return NextResponse.json(
         { error: "Cannot join session. It may be full, already started, or not exist." },

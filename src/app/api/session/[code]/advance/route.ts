@@ -49,14 +49,14 @@ async function scoreCoherence(character: CharacterWithAudition) {
 }
 
 async function runAllAuditions(code: string) {
-  const session = getSession(code);
+  const session = await getSession(code);
   if (!session) return;
 
   const characters = session.characters;
-  const totalTasks = characters.length * 6 + characters.length; // 6 tasks + 1 scoring per char
+  const totalTasks = characters.length * 6 + characters.length;
   let completed = 0;
 
-  updateAuditionProgress(code, 0, totalTasks);
+  await updateAuditionProgress(code, 0, totalTasks);
 
   const BATCH_SIZE = 3;
   for (let i = 0; i < characters.length; i += BATCH_SIZE) {
@@ -79,31 +79,30 @@ async function runAllAuditions(code: string) {
         for (const { task, response } of taskResults) {
           responses[task] = response;
           completed++;
-          updateAuditionProgress(code, completed, totalTasks);
+          await updateAuditionProgress(code, completed, totalTasks);
         }
 
-        setCharacterResponses(code, char.playerId, responses as Record<TaskType, string>);
+        await setCharacterResponses(code, char.playerId, responses as Record<TaskType, string>);
       })
     );
   }
 
-  // Score all characters
   for (const char of characters) {
     try {
-      const freshSession = getSession(code);
+      const freshSession = await getSession(code);
       const freshChar = freshSession?.characters.find((c) => c.playerId === char.playerId);
       if (freshChar && Object.keys(freshChar.responses).length === 6) {
         const score = await scoreCoherence(freshChar);
-        setCharacterScore(code, char.playerId, score);
+        await setCharacterScore(code, char.playerId, score);
       }
     } catch (err) {
       console.error(`Failed scoring for ${char.name}:`, err);
     }
     completed++;
-    updateAuditionProgress(code, completed, totalTasks);
+    await updateAuditionProgress(code, completed, totalTasks);
   }
 
-  updateSessionStatus(code, "presenting");
+  await updateSessionStatus(code, "presenting");
 }
 
 export async function POST(
@@ -119,13 +118,13 @@ export async function POST(
       return NextResponse.json({ error: "hostId is required" }, { status: 400 });
     }
 
-    const session = getSession(code);
+    const session = await getSession(code);
     if (!session) {
       return NextResponse.json({ error: "Session not found" }, { status: 404 });
     }
 
     const wasCreating = session.status === "creating";
-    const updated = advancePhase(code, hostId);
+    const updated = await advancePhase(code, hostId);
 
     if (!updated) {
       return NextResponse.json({ error: "Cannot advance phase" }, { status: 400 });
