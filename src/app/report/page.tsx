@@ -10,6 +10,7 @@ import MomentCard from "@/components/report/MomentCard";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import LoadingOrb from "@/components/ui/LoadingOrb";
+import PixelBot from "@/components/ui/PixelBot";
 import { useAppState, useAppDispatch } from "@/lib/context";
 import { getScore } from "@/lib/api";
 import {
@@ -22,7 +23,7 @@ import {
 
 export default function ReportPage() {
   const router = useRouter();
-  const { character, responses, score } = useAppState();
+  const { character, responses, score, avatarUrl } = useAppState();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -115,6 +116,11 @@ export default function ReportPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
         >
+          {avatarUrl && (
+            <div className="mb-4 flex justify-center">
+              <PixelBot avatarUrl={avatarUrl} name={character.name || ""} size={120} />
+            </div>
+          )}
           <CharacterCard character={character} />
         </motion.div>
 

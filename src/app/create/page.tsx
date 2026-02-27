@@ -61,6 +61,18 @@ export default function CreatePage() {
       type: "SET_CHARACTER",
       payload: { ...current, id },
     });
+
+    fetch("/api/avatar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ character: current }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.url) dispatch({ type: "SET_AVATAR", payload: data.url });
+      })
+      .catch(() => {});
+
     router.push("/audition");
   };
 

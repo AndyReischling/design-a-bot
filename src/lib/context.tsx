@@ -20,6 +20,7 @@ interface AppState {
   currentTask: number;
   score: CoherenceScore | null;
   isLoading: boolean;
+  avatarUrl: string | null;
 }
 
 type Action =
@@ -27,6 +28,7 @@ type Action =
   | { type: "UPDATE_CHARACTER"; payload: Partial<CharacterSheet> }
   | { type: "SET_RESPONSE"; payload: AuditionResponse }
   | { type: "SET_SCORE"; payload: CoherenceScore }
+  | { type: "SET_AVATAR"; payload: string }
   | { type: "NEXT_TASK" }
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "RESET" };
@@ -37,6 +39,7 @@ const initialState: AppState = {
   currentTask: 0,
   score: null,
   isLoading: false,
+  avatarUrl: null,
 };
 
 function appReducer(state: AppState, action: Action): AppState {
@@ -58,6 +61,8 @@ function appReducer(state: AppState, action: Action): AppState {
       };
     case "SET_SCORE":
       return { ...state, score: action.payload };
+    case "SET_AVATAR":
+      return { ...state, avatarUrl: action.payload };
     case "NEXT_TASK":
       return { ...state, currentTask: state.currentTask + 1 };
     case "SET_LOADING":

@@ -5,12 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import CharacterCard from "@/components/character/CharacterCard";
 import TaskSequence from "@/components/audition/TaskSequence";
+import PixelBot from "@/components/ui/PixelBot";
 import Button from "@/components/ui/Button";
 import { useAppState } from "@/lib/context";
 
 export default function AuditionPage() {
   const router = useRouter();
-  const { character } = useAppState();
+  const { character, avatarUrl } = useAppState();
   const [started, setStarted] = useState(false);
   const [showCharacter, setShowCharacter] = useState(false);
 
@@ -57,13 +58,18 @@ export default function AuditionPage() {
           </h1>
         </motion.div>
 
-        {/* Expandable character card */}
+        {/* Avatar + Expandable character card */}
         <motion.div
           className="mb-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
+          {avatarUrl && (
+            <div className="mb-4 flex justify-center">
+              <PixelBot avatarUrl={avatarUrl} name={character.name || ""} size={120} />
+            </div>
+          )}
           <button
             onClick={() => setShowCharacter(!showCharacter)}
             className="mb-2 flex items-center gap-2 font-sans text-xs uppercase tracking-wider text-bone transition-colors hover:text-bone"
