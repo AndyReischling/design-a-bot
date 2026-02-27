@@ -146,6 +146,44 @@ export default function CharacterForm({ character, onChange, avatarUrl, onGenera
                 value={character.fear || ""}
                 onChange={(e) => onChange({ fear: e.target.value })}
               />
+              <Textarea
+                label="What do they look like?"
+                placeholder="A squat orange robot with tired eyes and a dented chest plate..."
+                helperText="Describe your bot. We will generate pixel art from this."
+                value={character.appearance || ""}
+                onChange={(e) => onChange({ appearance: e.target.value })}
+              />
+              {character.appearance && character.appearance.trim().length > 5 && (
+                <Button
+                  variant="secondary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onGenerateAvatar?.();
+                  }}
+                  loading={avatarLoading}
+                  disabled={avatarLoading}
+                >
+                  {avatarUrl ? "Regenerate Avatar" : "Generate Avatar"}
+                </Button>
+              )}
+              {avatarUrl && (
+                <motion.div
+                  className="flex justify-center"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                >
+                  <div className="overflow-hidden rounded-xl border border-bone/10" style={{ width: 192, height: 192 }}>
+                    <Image
+                      src={avatarUrl}
+                      alt={`${character.name || "Character"} avatar`}
+                      width={192}
+                      height={192}
+                      style={{ imageRendering: "pixelated" }}
+                      unoptimized
+                    />
+                  </div>
+                </motion.div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -378,76 +416,6 @@ export default function CharacterForm({ character, onChange, avatarUrl, onGenera
         )}
       </AnimatePresence>
 
-      {/* Section 7: Appearance */}
-      <AnimatePresence>
-        {isSectionVisible(7) && (
-          <motion.div
-            variants={sectionReveal}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <Card
-              variant={expandedSections.has(7) ? "active" : "default"}
-              className="cursor-pointer"
-            >
-              <div onClick={() => toggleSection(7)}>
-                <SectionHeader number="07" title="What Do They Look Like?" />
-              </div>
-              <AnimatePresence>
-                {expandedSections.has(7) && (
-                  <motion.div
-                    variants={sectionReveal}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    className="flex flex-col gap-4 overflow-hidden"
-                  >
-                    <Textarea
-                      label="Describe your bot's appearance"
-                      placeholder="e.g., A squat orange robot with tired eyes and a dented chest plate, like it's been through too many customer complaints..."
-                      helperText="This will be used to generate a pixel art avatar for your character."
-                      value={character.appearance || ""}
-                      onChange={(e) => onChange({ appearance: e.target.value })}
-                    />
-                    {character.appearance && character.appearance.trim().length > 5 && (
-                      <Button
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onGenerateAvatar?.();
-                        }}
-                        loading={avatarLoading}
-                        disabled={avatarLoading}
-                      >
-                        {avatarUrl ? "Regenerate Avatar" : "Generate Avatar"}
-                      </Button>
-                    )}
-                    {avatarUrl && (
-                      <motion.div
-                        className="flex justify-center"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                      >
-                        <div className="overflow-hidden rounded-xl border border-bone/10" style={{ width: 192, height: 192 }}>
-                          <Image
-                            src={avatarUrl}
-                            alt={`${character.name || "Character"} avatar`}
-                            width={192}
-                            height={192}
-                            style={{ imageRendering: "pixelated" }}
-                            unoptimized
-                          />
-                        </div>
-                      </motion.div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
