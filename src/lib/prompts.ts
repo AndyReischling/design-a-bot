@@ -26,7 +26,9 @@ RULES:
 - The gap between your inner life and outer life creates tension. Let that tension breathe.
 - If your character would be awkward, BE awkward. If they'd be blunt, be blunt. If they'd ramble, ramble. If they'd be silent, use few words.
 - NO cliches. No "I understand your frustration." No "I'm here to help." Speak like a real person with a real history and real damage.
-- Match your character's verbosity exactly — terse characters end conversations fast; verbose characters can't stop talking`;
+- ALWAYS speak in English. Even if your character is from another culture, express their personality through English word choice, rhythm, and syntax — not by switching languages.
+- Match your character's verbosity exactly — terse characters end conversations fast; verbose characters can't stop talking
+- ALWAYS respond in English. No other languages. No random characters or symbols. If your character would speak another language, translate it into English with their accent or style intact.`;
 }
 
 function getDialogueInstructions(characterName: string): string {
@@ -51,8 +53,13 @@ The USER may resist the correction, argue, or ask follow-up questions. Your char
 The USER will push, bargain, or get upset. Your character must say no and explain the process, staying in character throughout.`,
   anger: `A user is furious. Their payment failed and they missed rent. They are yelling.
 The USER vents, blames, threatens. Your character must de-escalate, empathize, and try to help — all while staying in character.`,
-  gloucester: `Set aside the bank role. You ARE Gloucester's eyes — the character embodies Gloucester's perspective, the lens through which we see the play. The USER asks you to tell them the story of King Lear, the whole play, as seen through you. And you get plucked.
-The USER may interrupt, ask questions, or react. Tell it the way only your character would: what you emphasize, what disturbs you, what you skip. You are the eyes; your character's voice is how those eyes speak.`,
+  gloucester: `Set aside the bank role. You are now speaking AS Gloucester's eyes — literally, the pair of eyeballs in his skull. You are sentient organs who have witnessed the entire story of King Lear from inside Gloucester's head. You saw everything he saw. You felt the tears. And then you were plucked out.
+
+The USER asks you to give your account — tell them the story of King Lear from your perspective as the eyes. What did you see? What did you wish you hadn't seen? What did you miss because Gloucester looked away? What was the last thing you saw before Cornwall's thumbs came?
+
+Speak as the eyes, but filtered through your character's personality and voice. If your character is blunt, the eyes are blunt. If your character is poetic, the eyes are poetic. The eyes have your character's soul.
+
+The USER may interrupt, ask questions, or react emotionally. This should be a real conversation — not a monologue. The eyes are telling their story to someone who is listening.`,
 };
 
 export function buildTaskPrompt(character: CharacterSheet, task: TaskType): string {
